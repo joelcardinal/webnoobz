@@ -29,31 +29,13 @@ body {
 }
 .colLeft {
 	position: absolute;
-	width: 15%;
-	/*height: 100%;*/
-}
-.colMiddle {
-	margin-left: 16%;
-	position: absolute;
-	width: 39%;
-	height: 100%;
-	/* border-left: solid 0.2em #000; */
-}
-.colMiddleTop {
-	height: 40%;
-}
-.colMiddleBottom {
-	height: 50%;
-	/*border-top: solid 0.2em #000;*/
-	margin-top: 2.4em;
+	padding: 0;
+	margin: 0;
 }
 .colRight {
-	margin-left: 57%;
-	position: absolute;
-	width: 43%;
-	height: 100%;
+	margin-left: 50%;
+  position: absolute;
 	background-color:#FFF;
-	/*border-left: solid 0.2em #000;*/
 }
 .labels {
 	border: 0.2em solid rgba(0, 0, 0, 0.15);
@@ -64,6 +46,7 @@ body {
 	font-size: 0.9em;
 	position: absolute;
 	right: 0em;
+	cursor:pointer;
 }
 .bt {
 	border: solid 0.1em #9E9E9E;
@@ -82,13 +65,15 @@ body {
 	color:#FFF;
 }
 .editable {
-	height: 100%;
 	width: 100%;
 	font-size: 1.2em;
 	font-family: monospace;
 	overflow: scroll;
-	background-color: #FFF;
-	padding: 2% 2% 2% 2%;
+	background-color: #D5D5D5;
+	padding: 1em 1em 1em 1em;
+	resize: none;
+	border: none;
+	outline: #D5D5D5;
 }
 .name {
 	background-color: #D5D5D5;
@@ -98,7 +83,7 @@ body {
 	width: 10em;
 	height: 1.1em;
 	color: #000;
-	padding: 3px;
+  padding: 0.3em 0.3em 0.3em 0.5em;
 	font-size: 20px;
 }
 iframe {
@@ -110,15 +95,16 @@ iframe {
 <script>
 
 	var fieldExpanded = false;
+	var editArr = ['html','javascript','css'];
 
 	// update page render
 	function updateIframe(){
-		var javascript = document.querySelectorAll('.javascript')[0].textContent;
-		var css = decodeURIComponent(encodeURIComponent(document.querySelectorAll('.css')[0].textContent).split('%C2%A0').join(''));
-		var html = document.querySelectorAll('.html')[0].textContent;
+		var javascript = document.querySelector('.javascript').value;
+		var css = decodeURIComponent(encodeURIComponent(document.querySelector('.css').value).split('%C2%A0').join(''));
+		var html = document.querySelector('.html').value;
 		var page = '<html><head><script>' + javascript + '<'+'/script><style>' + css + '</style></head><body>' + html + '</body></html>';
 		var iframe = document.getElementsByTagName( "iframe" )[ 0 ];
-		
+
 	    if (iframe.contentDocument){
 	        doc = iframe.contentDocument;
 	    } else if(iframe.contentWindow) {
@@ -130,51 +116,23 @@ iframe {
 	    doc.open();
 	    doc.writeln(page);
 	    doc.close();
-	}
-	
-	// reset all editable fields
-	function reset(){
-		var javascript = document.querySelectorAll('.javascript')[0].textContent = '';
-		var css = document.querySelectorAll('.css')[0].textContent = '';
-		var html = document.querySelectorAll('.html')[0].textContent = '';
-		var page = '<html><head><script>' + javascript + '<'+'/script><style>' + css + '</style></head><body>' + html + '</body></html>';
-		var iframe = document.getElementsByTagName( "iframe" )[ 0 ];
-		
-	    if (iframe.contentDocument){
-	        doc = iframe.contentDocument;
-	    } else if(iframe.contentWindow) {
-	        doc = iframe.contentWindow.document;
-	    } else {
-	        doc = iframe.document;
-	    }
-
-	    doc.open();
-	    doc.writeln(page);
-	    doc.close();
-	}
-	
-	// show / hide editable field labels
-	function showHide(e){
-		var labels = document.querySelectorAll( '.labels' );
-		for(i=0;i<labels.length; i++){
-			labels[i].style.display = 'block';
-		}
-		if(fieldExpanded == false){
-			e.target.parentNode.children[0].style.display = 'none';
-		}
+			
+			save();
 	}
 	
 	// expand edit field to full size
 	function editFullSize(e){
-			if(e.target.parentNode.style.zIndex == 5000){
+		console.log('expand');
+			if(e.target.parentNode.style.zIndex === '5000'){
 				fieldExpanded = false;
-				if(e.target.parentNode.getAttribute('class') == 'colRight'){
+				if(e.target.parentNode.getAttribute('class') === 'colRight'){
 					var labels = document.querySelectorAll( '.labels' );
 					for(i=0;i<labels.length; i++){
 						labels[i].style.display = 'block';
 					}
 				}
 				e.target.parentNode.removeAttribute("style");
+				resizeColumns();
 			}else{
 				fieldExpanded = true;
 				e.target.parentNode.style.backgroundColor = '#FFF';
@@ -185,30 +143,43 @@ iframe {
 				e.target.parentNode.style.width = "100%";
 				e.target.parentNode.style.border = 'none';
 				e.target.parentNode.style.zIndex = 5000;
-				if(e.target.parentNode.getAttribute('class') == 'colRight'){
+				if(e.target.parentNode.getAttribute('class') === 'colRight'){
 					e.target.parentNode.style.margin = 0;
+				}else{
+					e.target.nextElementSibling.style.width = '100%';
+					e.target.nextElementSibling.style.height = '100%';
 				}
 			}
 	}
 	
 	// action for Update | Reset
 	function keyPressAction(e){
-		// Ctrl + i
-		if(e.charCode == 9 && e.ctrlKey == true){
+		console.log('charCode' + e.keyCode);
+		// Up arrow
+		//if(e.ctrlKey === true && e.keyCode === 85){
+		if(e.keyCode === 38){
+			e.preventDefault();
 			updateIframe();
+			return false;
 		}
-		// Ctrl + r
-		if(e.charCode == 18 && e.ctrlKey == true){
-			reset();
+
+		// tab
+		if(e.keyCode === 9){
+			e.preventDefault();
+			editArr.push(editArr.shift());
+			document.querySelector('#'+ editArr[2]).style.display = 'none';
+			document.querySelector('#'+ editArr[0]).style.display = 'block';
+			document.querySelector('.'+ editArr[0]).focus();
+			return false;
 		}
 	}
 	
 	function loadSaved(){
 		if(localStorage.getItem("pages")){
 			pages = JSON.parse(localStorage.getItem("pages"));
-			document.querySelectorAll('.javascript')[0].textContent = pages.untitled.javascript;
-			document.querySelectorAll('.css')[0].textContent = decodeURIComponent(encodeURIComponent(pages.untitled.css).split('%C2%A0').join(''));
-			document.querySelectorAll('.html')[0].textContent = pages.untitled.html;
+			document.querySelector('.javascript').value = pages.untitled.javascript;
+			document.querySelector('.css').value = decodeURIComponent(encodeURIComponent(pages.untitled.css).split('%C2%A0').join(''));
+			document.querySelector('.html').value = pages.untitled.html;
 			updateIframe()
 		}
 		
@@ -223,9 +194,9 @@ iframe {
 			}else{
 				pages = JSON.parse(localStorage.getItem("pages"));
 			}
-			var javascript = document.querySelectorAll('.javascript')[0].textContent;
-			var css = decodeURIComponent(encodeURIComponent(document.querySelectorAll('.css')[0].textContent).split('%C2%A0').join(''));
-			var html = document.querySelectorAll('.html')[0].textContent;
+			var javascript = document.querySelector('.javascript').value;
+			var css = decodeURIComponent(encodeURIComponent(document.querySelector('.css').value).split('%C2%A0').join(''));
+			var html = document.querySelector('.html').value;
 			
 			pages.untitled.javascript = javascript;
 			pages.untitled.css = css;
@@ -239,36 +210,26 @@ iframe {
 	}
 
   function resizeColumns(){
-  	var colLeft = document.querySelector( '.colLeft' );
-		colLeft.style.height = (window.innerHeight - 38) + 'px';
+  	var colLeft = document.querySelectorAll( '.editable' );
+		for(i=0;i<colLeft.length; i++){
+						colLeft[i].style.height = (window.innerHeight - 54) + 'px';
+						colLeft[i].style.width = (window.innerWidth / 2) - 24 + 'px';
+		}
   	var colRight = document.querySelector( '.colRight' );
 		colRight.style.height = (window.innerHeight - 30) + 'px';
-  	//var colMiddleTop = document.querySelector( '.colMiddleTop' );
-		//colMiddleTop.style.height = (window.innerHeight / 2.5) + 'px';
-  	//var colMiddleBottom = document.querySelector( '.colMiddleBottom' );
-		//colMiddleBottom.style.height = (window.innerHeight - 370) + 'px';
+		colRight.style.width = (window.innerWidth / 2) + 'px';
   }
+
 	
 	// onload...
 	document.addEventListener('DOMContentLoaded', function(){
 		
 		loadSaved();
 		
+		window.addEventListener('keydown', keyPressAction, false );
+		
 		var bt_update = document.querySelectorAll( '.bt_update' )[ 0 ];
 		bt_update.addEventListener('click', updateIframe, false );
-		
-		//var bt_reset = document.querySelectorAll( '.bt_reset' )[ 0 ];
-		//bt_reset.addEventListener('click', reset, false );
-		
-		window.addEventListener('keypress', keyPressAction, false );
-		
-		var editableCss = document.querySelectorAll( '.css' )[ 0 ];
-		editableCss.addEventListener('mousedown', function editableClicked(e){showHide(e);}, false );
-		var editableHtml = document.querySelectorAll( '.html' )[ 0 ];
-		editableHtml.addEventListener('mousedown', function editableClicked(e){showHide(e);}, false );
-		var editableJs = document.querySelectorAll( '.javascript' )[ 0 ];
-		editableJs.addEventListener('mousedown', function editableClicked(e){showHide(e);}, false );
-		
 		var labelCss = document.querySelectorAll( '.cssLabel' )[ 0 ];
 		labelCss.onclick = function(e){editFullSize(e);};
 		var labelHtml = document.querySelectorAll( '.htmlLabel' )[ 0 ];
@@ -281,7 +242,6 @@ iframe {
 		resizeColumns();
 		
 		window.onresize = function() {
-			console.log('moved');
 			resizeColumns();
 		};
 		
@@ -289,16 +249,12 @@ iframe {
 		
 		TODO:
 		
-		- Redo div/CSS
+		- fix bug when clicking tab (change editor) when in expand view
+		- Allow tabbing (add 4 spaces '   ')
 		- Namespace CSS & Javascript
-		- Refactor
 		- Save/Name/Select "page file"  <  >
-		- Fix text delete onFocus (switch to textarea?)
-		- Prevent formatted text from being pasted in (switch to textarea?)
-		- Keep text format (space, tab, return)
-		- Select / Load external JS library
-		- Test X-browser
-		- Multiple HTML files for Angular templating (require server)
+		- Multiple HTML files?
+		- Extension, service?
 		
 		
 		Resources:
@@ -325,6 +281,7 @@ iframe {
 </script>
 </head>
 <body>
+	
 	<div class="topNav">
 		<div class="name" contenteditable="true">Untitled</div>
 		<div class="actions">
@@ -335,28 +292,31 @@ iframe {
 			<span class="navLink actionShare">Share</span>
 			<span class="navLink actionDownload">Download</span>
 			<span class="navLink actionExtension">Extension</span>
+			<span class="navLink actionResources">Resources</span>
 			<span class="bt bt_update">Update</span>
 			<!-- <span class="bt bt_reset">Reset</span> -->
 		</div>
-		
 	</div>
-	<div class="colLeft">
+	
+	<div id="css" class="colLeft" style="display:none;">
 		<div class="labels cssLabel">CSS</div>
-		<div class="css editable" contenteditable="true"></div>
+		<textarea class="css editable"></textarea>
 	</div>
-	<div class="colMiddle">	
-		<div class="colMiddleTop">
-			<div class="labels htmlLabel">HTML</div>
-			<div class="html editable" contenteditable="true"></div>
-		</div>
-		<div class="colMiddleBottom">
-			<div class="labels jsLabel">Javascript</div>
-			<div class="javascript editable" contenteditable="true"></div>
-		</div>
+	
+	<div id="html" class="colLeft">	
+		<div class="labels htmlLabel">HTML</div>
+		<textarea class="html editable"></textarea>
 	</div>
-	<div class="colRight">
+	
+	<div id="javascript" class="colLeft" style="display:none;">
+		<div class="labels jsLabel">Javascript</div>
+		<textarea class="javascript editable"></textarea>
+	</div>
+	
+	<div id="render" class="colRight">
 		<div class="labels rLabel">Render</div>
 		<iframe></iframe>
 	</div>
+
 </body>
 </html>
