@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Web Playground</title>
+<style>
+html {
+	font-size: 16px;
+	font-family: sans-serif;
+	display: block;
+}
+body {
+	font-size: 62.5%;
+	margin: 0;
+	padding: 0;
+	display: block;
+	background-color:#000;
+}
+.topNav {
+	background-color: #000;
+	color: #FFF;
+	padding: 0.5em 3.5em 0.5em 2em;
+	height: 1.8em;
+	clear: both;
+}
+.topNav .actions {
+	font-size: 1.2em;
+	word-spacing: 0.5em;
+	margin: 0.2em 0 0 18em;
+}
+.colLeft {
+	position: absolute;
+	width: 15%;
+	/*height: 100%;*/
+}
+.colMiddle {
+	margin-left: 16%;
+	position: absolute;
+	width: 39%;
+	height: 100%;
+	/* border-left: solid 0.2em #000; */
+}
+.colMiddleTop {
+	height: 40%;
+}
+.colMiddleBottom {
+	height: 50%;
+	/*border-top: solid 0.2em #000;*/
+	margin-top: 2.4em;
+}
+.colRight {
+	margin-left: 57%;
+	position: absolute;
+	width: 43%;
+	height: 100%;
+	background-color:#FFF;
+	/*border-left: solid 0.2em #000;*/
+}
+.labels {
+	border: 0.2em solid rgba(0, 0, 0, 0.15);
+	background-color: rgba(0, 0, 0, 0.05);
+	color: rgba(0, 0, 0, 0.5);
+	padding: 0.2em 0.5em 0.2em 0.2em;
+	font-weight: bold;
+	font-size: 0.9em;
+	position: absolute;
+	right: 0em;
+}
+.bt {
+	border: solid 0.1em #9E9E9E;
+	border-radius: 0.4em;
+	padding: 0.1em 0.3em 0.1em 0.3em;
+	background-color: #6D6969;
+	color: #C4C4C4;
+}
+.bt:hover {
+	color:#FFF;
+}
+.navLink {
+	color:#C4C4C4;
+}
+.navLink:hover {
+	color:#FFF;
+}
+.editable {
+	height: 100%;
+	width: 100%;
+	font-size: 1.2em;
+	font-family: monospace;
+	overflow: scroll;
+	background-color: #FFF;
+	padding: 2% 2% 2% 2%;
+}
+.name {
+	background-color: #D5D5D5;
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 10em;
+	height: 1.1em;
+	color: #000;
+	padding: 3px;
+	font-size: 20px;
+}
+iframe {
+	border: none;
+	width: 100%;
+	height: 100%;
+}
+</style>
+<script>
+
+	var fieldExpanded = false;
+
+	// update page render
+	function updateIframe(){
+		var javascript = document.querySelectorAll('.javascript')[0].textContent;
+		var css = decodeURIComponent(encodeURIComponent(document.querySelectorAll('.css')[0].textContent).split('%C2%A0').join(''));
+		var html = document.querySelectorAll('.html')[0].textContent;
+		var page = '<html><head><script>' + javascript + '<'+'/script><style>' + css + '</style></head><body>' + html + '</body></html>';
+		var iframe = document.getElementsByTagName( "iframe" )[ 0 ];
+		
+	    if (iframe.contentDocument){
+	        doc = iframe.contentDocument;
+	    } else if(iframe.contentWindow) {
+	        doc = iframe.contentWindow.document;
+	    } else {
+	        doc = iframe.document;
+	    }
+
+	    doc.open();
+	    doc.writeln(page);
+	    doc.close();
+	}
+	
+	// reset all editable fields
+	function reset(){
+		var javascript = document.querySelectorAll('.javascript')[0].textContent = '';
+		var css = document.querySelectorAll('.css')[0].textContent = '';
+		var html = document.querySelectorAll('.html')[0].textContent = '';
+		var page = '<html><head><script>' + javascript + '<'+'/script><style>' + css + '</style></head><body>' + html + '</body></html>';
+		var iframe = document.getElementsByTagName( "iframe" )[ 0 ];
+		
+	    if (iframe.contentDocument){
+	        doc = iframe.contentDocument;
+	    } else if(iframe.contentWindow) {
+	        doc = iframe.contentWindow.document;
+	    } else {
+	        doc = iframe.document;
+	    }
+
+	    doc.open();
+	    doc.writeln(page);
+	    doc.close();
+	}
+	
+	// show / hide editable field labels
+	function showHide(e){
+		var labels = document.querySelectorAll( '.labels' );
+		for(i=0;i<labels.length; i++){
+			labels[i].style.display = 'block';
+		}
+		if(fieldExpanded == false){
+			e.target.parentNode.children[0].style.display = 'none';
+		}
+	}
+	
+	// expand edit field to full size
+	function editFullSize(e){
+			if(e.target.parentNode.style.zIndex == 5000){
+				fieldExpanded = false;
+				if(e.target.parentNode.getAttribute('class') == 'colRight'){
+					var labels = document.querySelectorAll( '.labels' );
+					for(i=0;i<labels.length; i++){
+						labels[i].style.display = 'block';
+					}
+				}
+				e.target.parentNode.removeAttribute("style");
+			}else{
+				fieldExpanded = true;
+				e.target.parentNode.style.backgroundColor = '#FFF';
+				e.target.parentNode.style.position = 'fixed';
+				e.target.parentNode.style.top = 0;
+				e.target.parentNode.style.left = 0;
+				e.target.parentNode.style.height = "100%";
+				e.target.parentNode.style.width = "100%";
+				e.target.parentNode.style.border = 'none';
+				e.target.parentNode.style.zIndex = 5000;
+				if(e.target.parentNode.getAttribute('class') == 'colRight'){
+					e.target.parentNode.style.margin = 0;
+				}
+			}
+	}
+	
+	// action for Update | Reset
+	function keyPressAction(e){
+		// Ctrl + i
+		if(e.charCode == 9 && e.ctrlKey == true){
+			updateIframe();
+		}
+		// Ctrl + r
+		if(e.charCode == 18 && e.ctrlKey == true){
+			reset();
+		}
+	}
+	
+	function loadSaved(){
+		if(localStorage.getItem("pages")){
+			pages = JSON.parse(localStorage.getItem("pages"));
+			document.querySelectorAll('.javascript')[0].textContent = pages.untitled.javascript;
+			document.querySelectorAll('.css')[0].textContent = decodeURIComponent(encodeURIComponent(pages.untitled.css).split('%C2%A0').join(''));
+			document.querySelectorAll('.html')[0].textContent = pages.untitled.html;
+			updateIframe()
+		}
+		
+		save();
+	}
+	
+	function save(){
+		window.setTimeout(function() {
+			if(!localStorage.getItem("pages")){
+				var pages = {};
+				pages.untitled = {};
+			}else{
+				pages = JSON.parse(localStorage.getItem("pages"));
+			}
+			var javascript = document.querySelectorAll('.javascript')[0].textContent;
+			var css = decodeURIComponent(encodeURIComponent(document.querySelectorAll('.css')[0].textContent).split('%C2%A0').join(''));
+			var html = document.querySelectorAll('.html')[0].textContent;
+			
+			pages.untitled.javascript = javascript;
+			pages.untitled.css = css;
+			pages.untitled.html = html;
+			
+			localStorage.setItem('pages',JSON.stringify(pages));
+			
+			save();
+			
+		}, 10000);
+	}
+
+  function resizeColumns(){
+  	var colLeft = document.querySelector( '.colLeft' );
+		colLeft.style.height = (window.innerHeight - 38) + 'px';
+  	var colRight = document.querySelector( '.colRight' );
+		colRight.style.height = (window.innerHeight - 30) + 'px';
+  	//var colMiddleTop = document.querySelector( '.colMiddleTop' );
+		//colMiddleTop.style.height = (window.innerHeight / 2.5) + 'px';
+  	//var colMiddleBottom = document.querySelector( '.colMiddleBottom' );
+		//colMiddleBottom.style.height = (window.innerHeight - 370) + 'px';
+  }
+	
+	// onload...
+	document.addEventListener('DOMContentLoaded', function(){
+		
+		loadSaved();
+		
+		var bt_update = document.querySelectorAll( '.bt_update' )[ 0 ];
+		bt_update.addEventListener('click', updateIframe, false );
+		
+		//var bt_reset = document.querySelectorAll( '.bt_reset' )[ 0 ];
+		//bt_reset.addEventListener('click', reset, false );
+		
+		window.addEventListener('keypress', keyPressAction, false );
+		
+		var editableCss = document.querySelectorAll( '.css' )[ 0 ];
+		editableCss.addEventListener('mousedown', function editableClicked(e){showHide(e);}, false );
+		var editableHtml = document.querySelectorAll( '.html' )[ 0 ];
+		editableHtml.addEventListener('mousedown', function editableClicked(e){showHide(e);}, false );
+		var editableJs = document.querySelectorAll( '.javascript' )[ 0 ];
+		editableJs.addEventListener('mousedown', function editableClicked(e){showHide(e);}, false );
+		
+		var labelCss = document.querySelectorAll( '.cssLabel' )[ 0 ];
+		labelCss.onclick = function(e){editFullSize(e);};
+		var labelHtml = document.querySelectorAll( '.htmlLabel' )[ 0 ];
+		labelHtml.onclick = function(e){editFullSize(e);};
+		var labelJs = document.querySelectorAll( '.jsLabel' )[ 0 ];
+		labelJs.onclick = function(e){editFullSize(e);};
+		var labelR = document.querySelectorAll( '.rLabel' )[ 0 ];
+		labelR.onclick = function(e){editFullSize(e);};
+		
+		resizeColumns();
+		
+		window.onresize = function() {
+			console.log('moved');
+			resizeColumns();
+		};
+		
+		/*
+		
+		TODO:
+		
+		- Redo div/CSS
+		- Namespace CSS & Javascript
+		- Refactor
+		- Save/Name/Select "page file"  <  >
+		- Fix text delete onFocus (switch to textarea?)
+		- Prevent formatted text from being pasted in (switch to textarea?)
+		- Keep text format (space, tab, return)
+		- Select / Load external JS library
+		- Test X-browser
+		- Multiple HTML files for Angular templating (require server)
+		
+		
+		Resources:
+		
+		- https://github.com/websanova/wJSNova
+		- http://youmightnotneedjquery.com/
+		
+		
+		Snippet:
+		
+		.test {color:red;}
+
+		<span class="test">Joel</span>
+
+		document.addEventListener('DOMContentLoaded', function(){
+  		document.querySelectorAll( '.test' )[ 0 ].textContent = 'Angelia';
+		});
+		
+		
+		*/
+		
+	});
+	
+</script>
+</head>
+<body>
+	<div class="topNav">
+		<div class="name" contenteditable="true">Untitled</div>
+		<div class="actions">
+			<span class="navLink actionNew">New</span>
+			<span class="navLink actionOpen">Open</span>
+			<span class="navLink actionDuplicate">Duplicate</span>
+			<span class="navLink actionView">View</span>
+			<span class="navLink actionShare">Share</span>
+			<span class="navLink actionDownload">Download</span>
+			<span class="navLink actionExtension">Extension</span>
+			<span class="bt bt_update">Update</span>
+			<!-- <span class="bt bt_reset">Reset</span> -->
+		</div>
+		
+	</div>
+	<div class="colLeft">
+		<div class="labels cssLabel">CSS</div>
+		<div class="css editable" contenteditable="true"></div>
+	</div>
+	<div class="colMiddle">	
+		<div class="colMiddleTop">
+			<div class="labels htmlLabel">HTML</div>
+			<div class="html editable" contenteditable="true"></div>
+		</div>
+		<div class="colMiddleBottom">
+			<div class="labels jsLabel">Javascript</div>
+			<div class="javascript editable" contenteditable="true"></div>
+		</div>
+	</div>
+	<div class="colRight">
+		<div class="labels rLabel">Render</div>
+		<iframe></iframe>
+	</div>
+</body>
+</html>
