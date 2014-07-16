@@ -88,15 +88,39 @@ body {
 	outline: #D5D5D5;
 }
 .name {
-	background-color: #D5D5D5;
+	background-color: #C5C5C5;
 	position: absolute;
 	top: 0;
 	left: 0;
 	width: 10em;
 	height: 1.1em;
 	color: #000;
-  padding: 0.3em 0.3em 0.3em 0.5em;
+  padding: 0.2em 0.3em 0.3em 0.5em;
 	font-size: 20px;
+}
+.pageList {
+	position: absolute;
+	top: 2.8em;
+	left: 27em;
+	background: #000;
+	color: #FFF;
+	padding: 0em;
+	margin: 0;
+	width: 36em;
+	display:none;
+}
+.pageList ul {
+	margin: 0;
+	padding: 1em 0.5em 0.5em 0.5em;
+	list-style-type: none;
+}
+.pageList li {
+	margin: 0.5em;
+	padding: 0.5em;
+	float: left;
+}
+.pageList li:hover {
+	background:#888;
 }
 iframe {
 	border: none;
@@ -108,14 +132,17 @@ iframe {
 
 	var fieldExpanded = false,
 		editArr = ['html','javascript','css'],
-		downloadStatus = false;
+		downloadStatus = false,
+		continueSaving = true,
+		listPanel = true,
+		oldName;
 
 	// update page render
 	function updateIframe(){
 		var javascript = document.querySelector('.javascript').value;
 		var css = decodeURIComponent(encodeURIComponent(document.querySelector('.css').value).split('%C2%A0').join(''));
-		var html = document.querySelector('.html').value;
-		var page = '<html><head><script>' + javascript + '<'+'/script><style>' + css + '</style></head><body>' + html + '</body></html>';
+		var html = document.querySelector('.html').value || '<div style="font-family: monospace;color: #D1CACA;margin-top: 1em;">Use up arrow on keyboard to update rendered view.</div>';
+		var page = '<!DOCTYPE html><html><head><title>' + document.querySelector('.name').textContent + '</title><script>' + javascript + '<'+'/script><style>' + css + '</style></head><body>' + html + '</body></html>';
 		var iframe = document.getElementsByTagName( "iframe" )[ 0 ];
 
 	    if (iframe.contentDocument){
@@ -130,14 +157,11 @@ iframe {
 	    doc.writeln(page);
 	    doc.close();
 			
-			save();
-			
 			return page;
 	}
 	
 	// expand edit field to full size
 	function editFullSize(e){
-		console.log('expand');
 			if(e.target.parentNode.style.zIndex === '5000'){
 				fieldExpanded = false;
 				if(e.target.parentNode.getAttribute('class') === 'colRight'){
@@ -147,9 +171,9 @@ iframe {
 					}
 				}
 				e.target.parentNode.removeAttribute("style");
-				resizeColumns();
+				resizeColumns(); // under certain conditions I think this might be causing the .editor to resize instead of staying 100%
 			}else{
-				fieldExpanded = true;
+				fieldExpanded = true; // not being used
 				e.target.parentNode.style.backgroundColor = '#FFF';
 				e.target.parentNode.style.position = 'fixed';
 				e.target.parentNode.style.top = 0;
@@ -161,24 +185,24 @@ iframe {
 				if(e.target.parentNode.getAttribute('class') === 'colRight'){
 					e.target.parentNode.style.margin = 0;
 				}else{
-					e.target.nextElementSibling.style.width = '100%';
-					e.target.nextElementSibling.style.height = '100%';
+					//e.target.nextElementSibling.style.width = 'none';
+					e.target.nextElementSibling.nextElementSibling.style.width = '100%';
+					e.target.nextElementSibling.nextElementSibling.style.height = '100%';
 				}
 			}
 	}
 	
 	// Keypress Actions
 	function keyPressAction(e){
-		console.log('charCode' + e.keyCode);
-		// Up arrow
-		//if(e.ctrlKey === true && e.keyCode === 85){
+		// console.log('charCode' + e.keyCode);
+		
+		// Up arrow == Update Rendered HTML
 		if(e.keyCode === 38){
 			e.preventDefault();
 			updateIframe();
 			return false;
 		}
-
-		// tab
+		// tab == Cycle through editors
 		if(e.keyCode === 9){
 			e.preventDefault();
 			editArr.push(editArr.shift());
@@ -191,37 +215,23 @@ iframe {
 	
 	function loadSaved(){
 		if(localStorage.getItem("pages")){
+			var pageName = localStorage.getItem("lastpage");
 			pages = JSON.parse(localStorage.getItem("pages"));
-			document.querySelector('.javascript').value = pages.untitled.javascript;
-			document.querySelector('.css').value = decodeURIComponent(encodeURIComponent(pages.untitled.css).split('%C2%A0').join(''));
-			document.querySelector('.html').value = pages.untitled.html;
+			
+			// try to get last page worked on, if not found get first available
+			if(!pages[pageName]){
+				for(k in pages){
+					pageName = k;
+					break
+				}
+			}
+			document.querySelector('.javascript').value = pages[pageName].javascript;
+			document.querySelector('.css').value = decodeURIComponent(encodeURIComponent(pages[pageName].css).split('%C2%A0').join(''));
+			document.querySelector('.html').value = pages[pageName].html;
+			document.querySelector('.name').textContent = pageName;
 			updateIframe()
 		}
 		
-		save();
-	}
-	
-	function save(){
-		window.setTimeout(function() {
-			if(!localStorage.getItem("pages")){
-				var pages = {};
-				pages.untitled = {};
-			}else{
-				pages = JSON.parse(localStorage.getItem("pages"));
-			}
-			var javascript = document.querySelector('.javascript').value;
-			var css = decodeURIComponent(encodeURIComponent(document.querySelector('.css').value).split('%C2%A0').join(''));
-			var html = document.querySelector('.html').value;
-			
-			pages.untitled.javascript = javascript;
-			pages.untitled.css = css;
-			pages.untitled.html = html;
-			
-			localStorage.setItem('pages',JSON.stringify(pages));
-			
-			save();
-			
-		}, 10000);
 	}
 
   function resizeColumns(){
@@ -252,16 +262,179 @@ iframe {
 	  var clicked = !tmpEl.dispatchEvent(event);
 	}
 
+	// stop automatically saving the page
+	function stopSaving(){
+		oldName = document.querySelector('.name').textContent;
+		continueSaving = false;
+	}
+	
+	// rename page
+	function rename(){
+		var newPageName = document.querySelector('.name').textContent;
+		
+		if(!localStorage.getItem("pages")){
+			var pages = {};
+			pages[newPageName] = {};
+		}else{
+			var pages = JSON.parse(localStorage.getItem("pages"));
+		}
+
+		if(pages[oldName]){
+			//rename key
+			pages[newPageName] = pages[oldName];
+			delete pages[oldName];
+			
+			localStorage.setItem('pages',JSON.stringify(pages));
+		}
+		continueSaving = true;
+	}
+	
+	// add new blank page
+	function newPage(){
+		stopSaving()
+		
+		if(!localStorage.getItem("pages")){
+			var pages = {};
+		}else{
+			pages = JSON.parse(localStorage.getItem("pages"));
+		}
+		
+		pages[''] = {html:'',javascript:'',css:''};
+		document.querySelector('.name').textContent = '';
+		localStorage.setItem('pages',JSON.stringify(pages));
+		loadSaved();
+		continueSaving = true;
+	}
+	
+	// duplicate current page
+	function duplicatePage(){
+		stopSaving()
+
+		if(!localStorage.getItem("pages")){
+			var pages = {};
+		}else{
+			var pages = JSON.parse(localStorage.getItem("pages"));
+		}
+		var jsData = document.querySelector('.javascript').value;
+		var cssData = document.querySelector('.css').value;
+		var htmlData = document.querySelector('.html').value;
+		pages[''] = {html:htmlData,javascript:jsData,css:cssData};
+		document.querySelector('.name').textContent = '';
+		localStorage.setItem('pages',JSON.stringify(pages));
+		continueSaving = true;
+	}
+	
+	// show list panel
+	function toggleListPanel(){
+		var el = document.querySelector('.pageList');
+		if(listPanel){
+			var ul = '<ul>';
+						
+			if(!localStorage.getItem("pages")){
+				var pages = {};
+			}else{
+				var pages = JSON.parse(localStorage.getItem("pages"));
+			}
+			
+			for(k in pages){
+				if(k === ''){k = 'Not Named'}
+				ul += '<li>' + k + '</li>';
+			}
+			
+			ul += '</ul>';
+			
+			el.innerHTML = ul;
+			el.style.display = 'block';
+			
+			var lis = document.querySelectorAll( '.pageList li' );
+			for(i=0;lis.length>i;i++){
+				lis[i].onclick = function(e){switchPage(e);};
+			}
+			
+			listPanel = false;
+		}else{
+			el.style.display = 'none';
+			listPanel = true;
+		}
+	}
+	
+	// switch Page
+	function switchPage(e){
+		stopSaving()
+		var pageName = e.target.textContent === 'Not Named' ? '' : e.target.textContent;
+
+		if(!localStorage.getItem("pages")){
+			var pages = {};
+		}else{
+			pages = JSON.parse(localStorage.getItem("pages"));
+		}
+
+		document.querySelector('.javascript').value = pages[pageName].javascript;
+		document.querySelector('.css').value = pages[pageName].css;
+		document.querySelector('.html').value = pages[pageName].html;
+		document.querySelector('.name').textContent = pageName;
+		
+		updateIframe();
+		
+		continueSaving = true;
+	}
+	
 	
 	// onload...
 	document.addEventListener('DOMContentLoaded', function(){
 		
 		loadSaved();
 		
+		window.setInterval(function() {
+			if(continueSaving){
+				
+				var pageName = document.querySelector('.name').textContent;
+			
+				if(!localStorage.getItem("pages")){
+					var pages = {};
+					pages[pageName] = {};
+				}else{
+					var pages = JSON.parse(localStorage.getItem("pages"));
+				}
+				var javascript = document.querySelector('.javascript').value;
+				var css = decodeURIComponent(encodeURIComponent(document.querySelector('.css').value).split('%C2%A0').join(''));
+				var html = document.querySelector('.html').value;
+				pages[pageName].javascript = javascript;
+				pages[pageName].css = css;
+				pages[pageName].html = html;
+			
+				localStorage.setItem('pages',JSON.stringify(pages));
+				localStorage.setItem('lastpage',pageName);
+			}
+			
+		}, 5000);
+		
+		// listens for keydown (for keycommands)
 		window.addEventListener('keydown', keyPressAction, false );
 		
+		// listens for update button
 		var bt_update = document.querySelector( '.bt_update' );
 		bt_update.addEventListener('click', updateIframe, false );
+		
+		// listens for New click
+		document.querySelector( '.actionNew' ).addEventListener('click', newPage, false );
+
+		// listens for Duplicate click
+		document.querySelector( '.actionDuplicate' ).addEventListener('click', duplicatePage, false );
+		
+		// listens for Open click
+		document.querySelector( '.actionOpen' ).addEventListener('click', toggleListPanel, false );
+
+		// listens for Page List Panel mouseout
+		document.querySelector( '.pageList' ).addEventListener('mouseleave', toggleListPanel, false );
+			
+		// listeners for changing the page name
+		var nameInputIn = document.querySelector( '.name' );
+		nameInputIn.addEventListener('click', stopSaving, false );
+		var nameInputOut = document.querySelector( '.name' );
+		nameInputOut.addEventListener('blur', rename, false );
+		
+		// listeners for expand page sections
 		var labelCss = document.querySelector( '.cssLabel' );
 		labelCss.onclick = function(e){editFullSize(e);};
 		var labelHtml = document.querySelector( '.htmlLabel' );
@@ -271,6 +444,9 @@ iframe {
 		var labelR = document.querySelector( '.rLabel' );
 		labelR.onclick = function(e){editFullSize(e);};
 		
+		// listens for download click
+		document.querySelector('.actionDownload').addEventListener('click', download, false );
+		
 		resizeColumns();
 		
 		window.onresize = function() {
@@ -278,22 +454,27 @@ iframe {
 		};
 		
 		document.querySelector('.html').focus();
-				
-		document.querySelector('.actionDownload').addEventListener('click', download, false );
-		
 		
 		/*
 		
+		GOAL:
+		
+		Take client-side Javascript as far as I can go without using any libraries to create a very simple HTML editor with rendered view
+		
 		BUGS:
 		
+		- It may not automatically save before you enter data then switch to a different page, would need a save function again
+		- Change name to input field and use placeholder for temp name?  Would cause issues elsewhere assigning '' makes it easier
 		- fix bug when clicking tab (change editor) when in expand view
 		- Allow tabbing indent (add 4 spaces '   '?)
 			+ Key commands  <  >, allow customization?
-		- New / Open / Duplicate
 		- Namespace CSS & Javascript, refactor js
+		- Add DTD, meta data and such to iframe page? Especially useful for download.
 		
 		IDEAS:
 		
+		- Add delete?
+		- Add versioning?
 		Should the content in the following depend on if the user is online or not?
 		  + Ajax ping to see if online, if so load iframe, otherwise show limited inline content
 		- Extension:  Starter (Boilerplate) projects, Videos, Slideshows, Scrolling text info
@@ -333,13 +514,12 @@ iframe {
 			<span class="navLink actionNew">New</span>
 			<span class="navLink actionOpen">Open</span>
 			<span class="navLink actionDuplicate">Duplicate</span>
-			<!-- <span class="navLink actionView">View</span> -->
-			<!-- <span class="navLink actionShare">Share</span> -->
 			<span class="navLink actionDownload">Download</span>
+			<!-- <span class="navLink actionView">View</span>
+			<span class="navLink actionShare">Share</span>
 			<span class="navLink actionExtension">Extension</span>
-			<span class="navLink actionResources">Resources</span>
+			<span class="navLink actionResources">Resources</span> -->
 			<span class="bt bt_update">Update</span>
-			<!-- <span class="bt bt_reset">Reset</span> -->
 		</div>
 	</div>
 	
@@ -364,6 +544,19 @@ iframe {
 	<div id="render" class="colRight">
 		<div class="labels rLabel"></div>
 		<iframe></iframe>
+	</div>
+	
+	<div class="pageList">
+		<ul>
+			<li>Untitled1</li>
+			<li>Untitled2</li>
+			<li>Untitled3</li>
+			<li>Untitled4</li>
+			<li>Untitled1</li>
+			<li>Untitled2</li>
+			<li>Untitled3</li>
+			<li>Untitled4</li>
+		</ul>
 	</div>
 
 </body>
