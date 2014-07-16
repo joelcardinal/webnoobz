@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
+<meta charset="utf-8">
 <title>Web Playground</title>
 <style>
 html {
@@ -135,13 +136,14 @@ iframe {
 		downloadStatus = false,
 		continueSaving = true,
 		listPanel = true,
+		renderPlaceHolder = '<div style="font-family: monospace;color: #D1CACA;margin-top: 1em;">Use up arrow on keyboard to update rendered view.</div>',
 		oldName;
 
 	// update page render
 	function updateIframe(){
 		var javascript = document.querySelector('.javascript').value;
 		var css = decodeURIComponent(encodeURIComponent(document.querySelector('.css').value).split('%C2%A0').join(''));
-		var html = document.querySelector('.html').value || '<div style="font-family: monospace;color: #D1CACA;margin-top: 1em;">Use up arrow on keyboard to update rendered view.</div>';
+		var html = document.querySelector('.html').value ? document.querySelector('.html').value : renderPlaceHolder  ;
 		var page = '<!DOCTYPE html><html><head><title>' + document.querySelector('.name').textContent + '</title><script>' + javascript + '<'+'/script><style>' + css + '</style></head><body>' + html + '</body></html>';
 		var iframe = document.getElementsByTagName( "iframe" )[ 0 ];
 
@@ -379,6 +381,38 @@ iframe {
 		continueSaving = true;
 	}
 	
+	// delete Page
+	function deletePage(){
+		stopSaving()
+		var pageName = document.querySelector('.name').textContent;
+		var newPageName;
+
+		if(!localStorage.getItem("pages")){
+			var pages = {};
+		}else{
+			pages = JSON.parse(localStorage.getItem("pages"));
+		}
+		
+		for(k in pages){
+			if(k !== pageName){
+				newPageName = k;
+				break
+			}
+		}
+		
+		delete pages[pageName]
+		localStorage.setItem('pages',JSON.stringify(pages));
+
+		document.querySelector('.javascript').value = pages[newPageName].javascript;
+		document.querySelector('.css').value = pages[newPageName].css;
+		document.querySelector('.html').value = pages[newPageName].html;
+		document.querySelector('.name').textContent = newPageName;
+		
+		updateIframe();
+		
+		continueSaving = true;
+	}
+	
 	
 	// onload...
 	document.addEventListener('DOMContentLoaded', function(){
@@ -421,6 +455,10 @@ iframe {
 
 		// listens for Duplicate click
 		document.querySelector( '.actionDuplicate' ).addEventListener('click', duplicatePage, false );
+
+		// listens for Delete click
+		document.querySelector( '.actionDelete' ).addEventListener('click', deletePage, false );
+		
 		
 		// listens for Open click
 		document.querySelector( '.actionOpen' ).addEventListener('click', toggleListPanel, false );
@@ -463,6 +501,7 @@ iframe {
 		
 		BUGS:
 		
+		- Click New on existing page and nothing happens in FF
 		- It may not automatically save before you enter data then switch to a different page, would need a save function again
 		- Change name to input field and use placeholder for temp name?  Would cause issues elsewhere assigning '' makes it easier
 		- fix bug when clicking tab (change editor) when in expand view
@@ -514,6 +553,7 @@ iframe {
 			<span class="navLink actionNew">New</span>
 			<span class="navLink actionOpen">Open</span>
 			<span class="navLink actionDuplicate">Duplicate</span>
+			<span class="navLink actionDelete">Delete</span>
 			<span class="navLink actionDownload">Download</span>
 			<!-- <span class="navLink actionView">View</span>
 			<span class="navLink actionShare">Share</span>
@@ -546,18 +586,7 @@ iframe {
 		<iframe></iframe>
 	</div>
 	
-	<div class="pageList">
-		<ul>
-			<li>Untitled1</li>
-			<li>Untitled2</li>
-			<li>Untitled3</li>
-			<li>Untitled4</li>
-			<li>Untitled1</li>
-			<li>Untitled2</li>
-			<li>Untitled3</li>
-			<li>Untitled4</li>
-		</ul>
-	</div>
+	<div class="pageList"></div>
 
 </body>
 </html>
