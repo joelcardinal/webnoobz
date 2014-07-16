@@ -144,7 +144,7 @@ iframe {
 		var javascript = document.querySelector('.javascript').value;
 		var css = decodeURIComponent(encodeURIComponent(document.querySelector('.css').value).split('%C2%A0').join(''));
 		var html = document.querySelector('.html').value ? document.querySelector('.html').value : renderPlaceHolder  ;
-		var page = '<!DOCTYPE html><html><head><title>' + document.querySelector('.name').textContent + '</title><script>' + javascript + '<'+'/script><style>' + css + '</style></head><body>' + html + '</body></html>';
+		var page = '<!DOCTYPE html><html><head><meta charset="utf-8"><title>' + document.querySelector('.name').textContent + '</title><script>' + javascript + '<'+'/script><style>' + css + '</style></head><body>' + html + '</body></html>';
 		var iframe = document.getElementsByTagName( "iframe" )[ 0 ];
 
 	    if (iframe.contentDocument){
@@ -293,7 +293,7 @@ iframe {
 	
 	// add new blank page
 	function newPage(){
-		stopSaving()
+		stopSaving();
 		
 		if(!localStorage.getItem("pages")){
 			var pages = {};
@@ -302,15 +302,19 @@ iframe {
 		}
 		
 		pages[''] = {html:'',javascript:'',css:''};
-		document.querySelector('.name').textContent = '';
 		localStorage.setItem('pages',JSON.stringify(pages));
-		loadSaved();
+		
+		document.querySelector('.javascript').value = '';
+		document.querySelector('.css').value = '';
+		document.querySelector('.html').value = '';
+		document.querySelector('.name').textContent = '';
+		updateIframe();
 		continueSaving = true;
 	}
 	
 	// duplicate current page
 	function duplicatePage(){
-		stopSaving()
+		stopSaving();
 
 		if(!localStorage.getItem("pages")){
 			var pages = {};
@@ -501,7 +505,6 @@ iframe {
 		
 		BUGS:
 		
-		- Click New on existing page and nothing happens in FF
 		- It may not automatically save before you enter data then switch to a different page, would need a save function again
 		- Change name to input field and use placeholder for temp name?  Would cause issues elsewhere assigning '' makes it easier
 		- fix bug when clicking tab (change editor) when in expand view
