@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0,maximum-scale=1.0,initial-scale=1.0">
+  	<style>
+		body {
+			margin: 0;
+			padding: 0;
+			font-family: sans-serif;
+		}
+		header {
+		    background-color: #000;
+		    margin: 0;
+		    padding: 0;
+			height: 28px
+		}
+		header nav {
+			position: absolute;
+			left: 230px;
+		}
+		header nav ul {
+			list-style: none;
+		    padding: 0;
+		    margin: 0;
+		}
+		header nav ul li {
+			color: #C4C4C4;
+  		  	cursor: pointer;
+  		  	float: left;
+  		  	padding: 8px 5px 0 5px;
+  		  	font-size: 14px;
+			letter-spacing: 0.5px;
+		}
+		header nav ul #updateBtn {
+			border: solid 1px #9E9E9E;
+  		  	border-radius: 4px;
+  		  	padding: 3px;
+  		  	background-color: #6D6969;
+  		  	margin: 3px 0 0 10px;
+		}
+		div.leftColumn {
+		  background-color: #D5D5D5;
+		  margin: 0;
+		  padding: 5px;
+		  position: absolute;
+		  top: 28px;
+		  left: 0px;
+		  right: 50.5%;
+		  bottom: 0px;
+		}
+		div.leftColumn textarea {
+		  width: 100%;
+		  height: 100%;
+		  font-family: monospace;
+		  overflow: scroll;
+		  background-color: #D5D5D5;
+		  resize: none;
+		  border: none;
+		  outline: #D5D5D5;
+		}
+		div.rightColumn {
+			background-color: #FFF;
+  		  	margin: 0;
+  		  	padding: 0;
+  		  	position: absolute;
+  		  	top: 28px;
+  		  	left: 49.5%;
+  		  	right: 0px;
+  		  	bottom: 0px;
+		}
+		div.rightColumn iframe {
+			border: none;
+		}
+		.wholePage {
+		    background-color: teal;
+		    margin: 0;
+		    padding: 0;
+		    position: absolute;
+		    top: 28px;
+		    left: 10px;
+		    right: 10px;
+		    bottom: 10px;
+		}
+		.mode {
+			position: absolute;
+			right: 0.3em;
+			top: 0.2em;
+			color: #555;
+			font-size: 5em;
+			font-weight: bold;
+			opacity: 0.1;
+			pointer-events: none;
+		}
+		.resize {
+			  width: 15px;
+			  height: 15px;
+			  position: absolute;
+			  right: 0.3em;
+			  top: 0.2em;
+			  cursor: pointer;
+			  background-image: url(data:image/png;base64,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);
+			  background-position-x: 0;
+			  background-repeat: no-repeat;
+			  background-size: contain;
+			  opacity: 0.5;
+		}
+		.name {
+		    background-color: #C5C5C5;
+		    position: absolute;
+		    top: 0;
+		    left: 0;
+		    width: 200px;
+		    color: #000;
+		    padding: 5px 0 0 5px;
+		    margin: 0;
+		    font-size: 20px;
+		    font-family: sans-serif;
+		    height: 28px;
+		    resize: none;
+		    border: none;
+		}
+		.eye {
+  		  background-repeat: no-repeat;
+		  width: 18px;
+		  height: 12px;
+		  margin: 7.5px 2px;
+		  float: right;
+		  display: none;
+		}
+		.darkEye {
+			background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAAMCAMAAABYzB2OAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAAZQTFRFbWlpAAAAwwEI/gAAAD9JREFUeNpkjkkOADAIAsf/f7pNLIipBxcyQagubmnVjUWC0PBmDTHDycKdlPglUytRo5lyHi2797syfB0BBgA23AB3Z9N51AAAAABJRU5ErkJggg==);
+		}
+		.lightEye {
+			background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAAMCAMAAABYzB2OAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAAZQTFRF////AAAAVcLTfgAAAD9JREFUeNpkjkkOADAIAsf/f7pNLIipBxcyQagubmnVjUWC0PBmDTHDycKdlPglUytRo5lyHi2797syfB0BBgA23AB3Z9N51AAAAABJRU5ErkJggg==);
+		}
+	</style>
+  </head>
+  <body>
+  
+	  <header>
+		<textarea class="name" placeholder="Untitled" wrap="off" autocorrect="off" autocapitalize="off" spellcheck="false" ></textarea>
+	  	<nav>
+			<ul>
+				<li id="collaborateBtn">Collaborate</li>
+				<li id="downloadBtn">Download</li>
+				<li id="updateBtn">Update</li>
+			</ul>
+		</nav>
+		<div class="eye" style="display:none;"></div>
+	  </header>
+	  
+	  <div id="css" class="leftColumn" style="display:none;">
+    	<div class="resize"></div>
+    	<div class="mode">CSS</div>
+	  	<textarea class="css" wrap="off" autocorrect="off" autocapitalize="off" spellcheck="false"></textarea>
+	  </div>
+	  <div id="html" class="leftColumn">
+    	<div class="resize"></div>
+    	<div class="mode">HTML</div>
+	  	<textarea class="html" wrap="off" autocorrect="off" autocapitalize="off" spellcheck="false"></textarea>
+	  </div>
+	  <div id="javascript" class="leftColumn" style="display:none;">
+    	<div class="resize"></div>
+    	<div class="mode">Javascript</div>
+	  	<textarea class="javascript" wrap="off" autocorrect="off" autocapitalize="off" spellcheck="false"></textarea>
+	  </div>
+	  
+	  <div class="rightColumn">
+	  	<div class="resize"></div>
+		<iframe height="100%" width="100%"></iframe>
+	  </div>
+	  <script>
+	    // TogetherJS configuration
+	    
+		// trigger render...
+	  	// on join session - done
+	    // on click btn - done
+	    // on up arrow
+	  
+	  	var TogetherJSConfig_cloneClicks = '#updateBtn',
+		TogetherJSConfig_dontShowClicks = true,
+	  	TogetherJSConfig_useMinimizedCode = true,
+	  	//TogetherJSConfig_ignoreMessages = true,
+	  	TogetherJSConfig_suppressJoinConfirmation = true;
+	  </script>
+	  <script src="https://togetherjs.com/togetherjs-min.js"></script>
+	  <script>
+		  TogetherJS.hub.on("togetherjs.form-init", function (msg) {
+			  updateIframe();
+		  });
+		  TogetherJS.hub.on("renderKeyPress", function (msg) {
+			  updateIframe();
+		  });
+/*
+		  TogetherJS.hub.on("int-connection", function (msg) {
+			  //
+		  });
+*/
+		  TogetherJS.on("ready", function (msg) {
+			  console.log('hello');
+			var eyeElm = document.querySelector('.eye');
+			var collabElm = document.getElementById('collaborateBtn');
+			eyeElm.style.display = 'block';
+			eyeElm.classList.remove('darkEye');
+			eyeElm.classList.add('lightEye');
+			collabElm.style.color = '#FFF';
+		  });
+
+		  TogetherJS.on("close", function (msg) {
+			  			  console.log('close');
+			var eyeElm = document.querySelector('.eye');
+			var collabElm = document.getElementById('collaborateBtn');
+			eyeElm.style.display = 'none';
+			eyeElm.classList.remove('lightEye');
+			eyeElm.classList.add('darkEye');
+			collabElm.style.color = '#C4C4C4';
+		  });
+
+	  </script>
+		<script>
+			editArr = ['html','javascript','css'];
+		
+			// Download content as file hack, file name no longer working in Chrome
+			// http://dtsn.me/2013/03/12/downloading-data-from-localstorage/	
+			function download() {
+				var content = updateIframe();
+		    	var tmpEl = document.createElement('a');
+				var name = function(){
+					var nameText = document.querySelector('.name').textContent;
+					if(nameText){
+						return (nameText.replace(/[&\/\\#,+()$~%.'":*?<>{} ]/g, '_').toLowerCase() + '.html');
+					}else{
+						return 'My_Website.html';
+					}
+				};
+				// make sure you choose correct data type
+		    	tmpEl.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(content));
+		    	tmpEl.setAttribute('download', name());
+				// click event
+			  	var event = new MouseEvent('click', {
+			    	'view': window,
+			    	'bubbles': true,
+			    	'cancelable': true
+			  	});
+			  	var clicked = !tmpEl.dispatchEvent(event);
+			}
+		
+			// update page render
+			function updateIframe(){
+				var javascript = document.querySelector('.javascript').value;
+				var css = decodeURIComponent(encodeURIComponent(document.querySelector('.css').value).split('%C2%A0').join(''));
+				var html = document.querySelector('.html').value || '<div style="font-family: monospace;color: #D1CACA;margin-top: 10px;">Ctrl + j cycles editors, Update button or Ctrl + u updates render panel.</div>';
+				var page = '<!DOCTYPE html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0,maximum-scale=1.0,initial-scale=1.0"><title>' + (document.querySelector('.name').textContent || 'My Website') + '</title><style>' + css + '</style></head><body>' + html + '<' + 'script>' + javascript + '<'+'/script></body></html>';
+				var iframe = document.querySelector('div.rightColumn iframe');
+
+			    if (iframe.contentDocument){
+			        doc = iframe.contentDocument;
+			    } else if(iframe.contentWindow) {
+			        doc = iframe.contentWindow.document;
+			    } else {
+			        doc = iframe.document;
+			    }
+
+			    doc.open();
+			    doc.writeln(page);
+			    doc.close();
+			
+				return page;
+			}
+
+			// expand edit field to full size
+			function editFullSize(e){
+					if(e.target.parentNode.style.zIndex === '5000'){
+					
+						if(e.target.parentNode.getAttribute('class') === 'rightColumn'){
+							e.target.parentNode.style.left = '49.5%';
+						}else{
+							e.target.parentNode.style.right = '50.5%'; 
+						}
+						e.target.parentNode.removeAttribute("style");
+
+					}else{
+					
+						if(e.target.parentNode.getAttribute('class') === 'rightColumn'){
+							e.target.parentNode.style.left = 0;
+						}else{
+							e.target.parentNode.style.right = 0;
+						}
+						e.target.parentNode.style.zIndex = '5000';
+					}
+			}
+		
+			// Keypress Actions
+			function keyPressAction(e){
+				//console.log('charCode' + e.keyCode);
+		
+				// Ctrl + u: Update Rendered HTML
+				if(e.ctrlKey && e.keyCode === 85){
+					e.preventDefault();
+					updateIframe();
+					renderKeyPressMsg();
+					
+					return false;
+				}
+				// Ctrl + j: cycle editors
+				if(e.ctrlKey && e.keyCode === 74){
+					e.preventDefault();
+					editArr.push(editArr.shift());
+					document.querySelector('#'+ editArr[2]).style.display = 'none';
+					document.querySelector('#'+ editArr[0]).style.display = 'block';
+					document.querySelector('.'+ editArr[0]).focus();
+					return false;
+				}
+			}
+			
+			// Collaborate
+			/*
+			function initCollaborate(){
+				TogetherJS();
+				var eyeElm = document.querySelector('.eye');
+				var collabElm = document.getElementById('collaborateBtn');
+				if(getComputedStyle(eyeElm)['display'] == 'none'){
+					eyeElm.style.display = 'block';
+					eyeElm.classList.remove('darkEye');
+					eyeElm.classList.add('lightEye');
+					collabElm.style.color = '#FFF';
+				}else{
+					eyeElm.style.display = 'none';
+					eyeElm.classList.remove('lightEye');
+					eyeElm.classList.add('darkEye');
+					collabElm.style.color = '#C4C4C4';
+				}
+				
+			}
+			*/
+			
+			// show/hide TogetherJS UI
+			function toggleEye(){
+				var elm = document.querySelector('.eye');
+				if(elm.classList.contains('lightEye')){
+					elm.classList.remove('lightEye');
+					elm.classList.add('darkEye');
+					document.getElementById('togetherjs-container').style.display = 'none';
+				}else{
+					elm.classList.remove('darkEye');
+					elm.classList.add('lightEye');
+					document.getElementById('togetherjs-container').style.display = 'block';
+				}
+			}
+		
+			// utils
+			function forEachElement(selector, fn){
+			  var elements = document.querySelectorAll(selector);
+			  for (var i = 0; i < elements.length; i++)
+			    fn(elements[i], i);
+			}
+			function renderKeyPressMsg() {
+			  if(TogetherJS.running){
+			  	TogetherJS.send({type: "renderKeyPress"});
+			  }
+			}
+		
+			// onload...
+			document.addEventListener('DOMContentLoaded', function(){
+				updateIframe();
+				// listeners
+				document.querySelector('#updateBtn').addEventListener('click', updateIframe, false );
+				document.querySelector('#downloadBtn').addEventListener('click', download, false );
+				document.querySelector('#collaborateBtn').addEventListener('click', TogetherJS, false );
+				document.querySelector('.eye').addEventListener('click', toggleEye, false );
+				
+				window.addEventListener('keydown', keyPressAction, false );
+				forEachElement('.resize', function(el, i){
+					el.onclick = function(e){editFullSize(e);};
+				});
+			});
+			
+			/*
+			
+			TODO:
+			- Eye gets out of sync with Collaborate
+			- Syntax highlighting (ace / codemirror), prevent use of special words
+			- Save content
+			- Mobile
+			- Add learning panel
+				- Voice and keyboard recording?
+				- Youtube?
+				- Web hub for sharing
+				- sync learning panel with Collaborate?
+			- Multi-language support
+			- Abilty to edit html/head/body tags
+			- Login? Need to think about how this will affect user if added later (lose all local data)
+			- Add quick load of library examples (jQuery,D3,ThreeJS...etc.)
+			
+			IDEAS:
+			- Pre-parser to catch errors?
+			
+			*/
+		
+		</script>	  
+	</body>
+</html>

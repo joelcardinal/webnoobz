@@ -67,12 +67,14 @@ body {
 	padding: 0.1em 0.3em 0.1em 0.3em;
 	background-color: #6D6969;
 	color: #C4C4C4;
+	cursor:pointer;
 }
 .bt:hover {
 	color:#FFF;
 }
 .navLink {
 	color:#C4C4C4;
+	cursor:pointer;
 }
 .navLink:hover {
 	color:#FFF;
@@ -491,7 +493,13 @@ iframe {
 		
 		resizeColumns();
 		
+		// For deskstop when resizing browser window
 		window.onresize = function() {
+			resizeColumns();
+		};
+		
+		// For mobile when orientation changes
+		window.onorientationchange = function() {
 			resizeColumns();
 		};
 		
@@ -501,29 +509,31 @@ iframe {
 		
 		GOAL:
 		
-		Take client-side Javascript as far as I can go without using any libraries to create a very simple HTML editor with rendered view
+		Make a simple single page client-side HTML editor with rendered view with no external libraries
 		
 		BUGS:
 		
+		- fix layout for mobile
+				resizeColumns on orientation change -- this will break expanded view
+		    different layout for mobile, one view at a time?  Tablet?
+		- Issue: Hit Delete when there is only one page
 		- It may not automatically save before you enter data then switch to a different page, would need a save function again
 		- Change name to input field and use placeholder for temp name?  Would cause issues elsewhere assigning '' makes it easier
 		- fix bug when clicking tab (change editor) when in expand view
 		- Allow tabbing indent (add 4 spaces '   '?)
 			+ Key commands  <  >, allow customization?
 		- Namespace CSS & Javascript, refactor js
-		- Add DTD, meta data and such to iframe page? Especially useful for download.
 		
 		IDEAS:
 		
-		- Add delete?
 		- Add versioning?
 		Should the content in the following depend on if the user is online or not?
 		  + Ajax ping to see if online, if so load iframe, otherwise show limited inline content
-		- Extension:  Starter (Boilerplate) projects, Videos, Slideshows, Scrolling text info
-		- Share:  Service to upload web pages
+		- Extension:  Starter (Boilerplate) projects (HTML5,AngularJS,WebGL), Youtube, HTML Slideshows / Scrolling text info
+		- Share:  Service to upload web pages and provide URL
 		- Resources: Links to sites to learn
-		
-		- Multiple HTML files?
+		- Multiple HTML files (for AngularJS templates)?
+		- Package for offline use(app cache)?
 		
 		Development Resources:
 		
