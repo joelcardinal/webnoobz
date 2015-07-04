@@ -59,7 +59,7 @@ function download() {
   var clicked = !tmpEl.dispatchEvent(event);
 }
 
-// update page render
+// update render panel
 function updateIframe(){
 	var js,css,html;
 	data[0][1] = encodeURIComponent(editor.getSession().getValue());
@@ -152,6 +152,7 @@ function toggleEye(){
 	}
 }
 
+// init Ace editor
 function initAce(){
   editor = ace.edit("editor");
   editor.setTheme("ace/theme/monokai");
@@ -202,12 +203,16 @@ function initAce(){
 		}
 	});
 	editor.$blockScrolling = Infinity;
-	//editor.getSession().setTabSize(2);
-	//setOptions({enableBasicAutocompletion: true});
 	/*
+	
+	editor.getSession().setTabSize(2);
+	
+	setOptions({enableBasicAutocompletion: true});
+
 	editor.getSession().on('change', function(){
 	  console.log(editor.getSession().getValue());
 	});
+	
 	*/
 }
 
@@ -234,39 +239,30 @@ document.addEventListener('DOMContentLoaded', function(){
 	document.querySelector('#downloadBtn').addEventListener('click', download, false );
 	document.querySelector('#collaborateBtn').addEventListener('click', TogetherJS, false );
 	document.querySelector('.eye').addEventListener('click', toggleEye, false );
-	
-	/*
-	forEachElement('.resize', function(el, i){
-		el.onclick = function(e){editFullSize(e);};
-	});
-	*/
-	
 });
 
 /*	
 
 TODO:
-- Add Help nav with commands, etc.
-- Double scroll bars if vertical content?
-- Create normalize.css file?
-- Eye gets out of sync with Collaborate?
+- Add Help nav with key commands, togetherjs...etc.
+- Add About with some info about the project
+- Create normalize.css file (test on diff. browsers)?
 - Save content
 - Refactor
 - Mobile UX
+- Add quick load of library examples (jQuery,D3,ThreeJS...etc.)
+- Abilty to edit html/head/body tags
 - Add learning panel
 	- Voice and keyboard recording?
 	- Youtube?
 	- Web hub for sharing
 	- sync learning panel with Collaborate?
 - Multi-language support
-- Abilty to edit html/head/body tags
+	https://hacks.mozilla.org/2014/12/introducing-the-javascript-internationalization-api/
 - Login? Need to think about how this will affect user if added later (lose all local data)
-- Add quick load of library examples (jQuery,D3,ThreeJS...etc.)
-
-IDEAS:
-- Pre-parser to catch errors?
 
 Resources:
+http://youmightnotneedjquery.com/
 http://pixlr.com/editor/
 http://duri.me/
 

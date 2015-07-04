@@ -2,6 +2,7 @@ body {
 	margin: 0;
 	padding: 0;
 	font-family: sans-serif;
+	overflow: hidden;
 }
 header {
     background-color: #6B6B6B;
@@ -30,7 +31,7 @@ header nav ul li:hover {
 	color: #FFFFFF;
 }
 div.leftColumn {
-  background-color: #D5D5D5;
+  background-color: #272822;
   margin: 0;
   padding: 0;
   position: absolute;
