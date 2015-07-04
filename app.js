@@ -5,11 +5,8 @@ TogetherJS.hub.on("togetherjs.form-init", function (msg) {
 TogetherJS.hub.on("renderKeyPress", function (msg) {
   updateIframe();
 });
-TogetherJS.hub.on("dataChange", function (msg) {
-  editor.getSession().setValue(decodeURIComponent(msg.data));
-});
 TogetherJS.hub.on("switchEditor", function (msg) {
-  switchEditor();
+  while(msg.currentMode != data[0][0]){switchEditor()};
 });
 TogetherJS.on("ready", function (msg) {
 	var eyeElm = document.querySelector('.eye');
@@ -130,21 +127,22 @@ function resizePanel(panel){
 
 // Ctrl+j
 function switchEditor(){
-	TogetherJS.send({type: "switchEditor"});
-	data[0][1] = encodeURIComponent(editor.getSession().getValue());
-	data.push(data.shift());
-	//document.querySelector('.leftColumn').setAttribute('id',data[0][0]);
-	document.querySelector('.mode').innerHTML = data[0][0].toUpperCase();
 	if( editor && editor.getSession() ){
-		  editor.getSession().setMode("ace/mode/" + data[0][0]);
-			editor.getSession().setValue(decodeURIComponent(data[0][1]));
+		data[0][1] = encodeURIComponent(editor.getSession().getValue());
+		data.push(data.shift());
+		document.querySelector('.mode').innerHTML = data[0][0].toUpperCase();
+		editor.getSession().setMode("ace/mode/" + data[0][0]);
+		editor.getSession().setValue(decodeURIComponent(data[0][1]));
+		if(TogetherJS && TogetherJS.running){
+				TogetherJS.send({type: "switchEditor",currentMode:data[0][0]});
+		}
 	}
 }
 
 // Ctrl+k
 function updateEditor(){
 	updateIframe();
-	renderKeyPressMsg(); // should this go in updateIframe()?
+	renderKeyPressMsg();
 }
 
 // show/hide TogetherJS UI
@@ -226,12 +224,6 @@ function initAce(){
 	});
 	
 	*/
-	
-	editor.getSession().on('change', function(){
-		var encData = encodeURIComponent(data[0][1]);
-		TogetherJS.send({type: "dataChange",data: encData});
-	});
-	
 }
 
 // utils
