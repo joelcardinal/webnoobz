@@ -121,3 +121,6 @@ div.rightColumn iframe {
 	right: 0;
 	bottom: 0;
 }
+.togetherjs-cursor-container {
+	display: none;
+}

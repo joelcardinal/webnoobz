@@ -251,14 +251,18 @@ document.addEventListener('DOMContentLoaded', function(){
 	document.querySelector('.eye').addEventListener('click', toggleEye, false );
 });
 
-/*	
+/*
 
 TODO:
-- No longer going to sync with togetherjs need to pass update msgs
+- Add name input for togetherjs
+		var userName = window.prompt('Please enter your name:');
+		TogetherJS.require("peers").Self.name = userName;
+		TogetherJS.require("peers").Self.update(TogetherJS.require("peers").Self);
 - Add Help nav with key commands, togetherjs...etc.
 - Add About with some info about the project
 - Create normalize.css file (test on diff. browsers)?
 - Save content
+	https://github.com/mozilla/localForage
 - Refactor
 - Mobile UX
 - Add quick load of library examples (jQuery,D3,ThreeJS...etc.)
