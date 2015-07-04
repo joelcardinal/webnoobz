@@ -5,6 +5,12 @@ TogetherJS.hub.on("togetherjs.form-init", function (msg) {
 TogetherJS.hub.on("renderKeyPress", function (msg) {
   updateIframe();
 });
+TogetherJS.hub.on("dataChange", function (msg) {
+  editor.getSession().setValue(decodeURIComponent(msg.data));
+});
+TogetherJS.hub.on("switchEditor", function (msg) {
+  switchEditor();
+});
 TogetherJS.on("ready", function (msg) {
 	var eyeElm = document.querySelector('.eye');
 	var collabElm = document.getElementById('collaborateBtn');
@@ -118,10 +124,13 @@ function resizePanel(panel){
 		}
 		e.style.zIndex = '5000';
 	}
+	// resize Ace editor
+	editor.resize();
 }
 
 // Ctrl+j
 function switchEditor(){
+	TogetherJS.send({type: "switchEditor"});
 	data[0][1] = encodeURIComponent(editor.getSession().getValue());
 	data.push(data.shift());
 	//document.querySelector('.leftColumn').setAttribute('id',data[0][0]);
@@ -158,6 +167,9 @@ function initAce(){
   editor.setTheme("ace/theme/monokai");
   editor.getSession().setMode("ace/mode/html");
 	editor.setShowPrintMargin(false);
+	editor.$blockScrolling = Infinity; // prevents unnecessary messaging in console
+	editor.setOptions({highlightActiveLine:false});
+		
 	editor.commands.addCommand({
 		name: 'switchEditor',
 		bindKey: {
@@ -202,7 +214,7 @@ function initAce(){
 			resizePanel('rightColumn');
 		}
 	});
-	editor.$blockScrolling = Infinity;
+	
 	/*
 	
 	editor.getSession().setTabSize(2);
@@ -214,6 +226,12 @@ function initAce(){
 	});
 	
 	*/
+	
+	editor.getSession().on('change', function(){
+		var encData = encodeURIComponent(data[0][1]);
+		TogetherJS.send({type: "dataChange",data: encData});
+	});
+	
 }
 
 // utils
@@ -244,6 +262,7 @@ document.addEventListener('DOMContentLoaded', function(){
 /*	
 
 TODO:
+- No longer going to sync with togetherjs need to pass update msgs
 - Add Help nav with key commands, togetherjs...etc.
 - Add About with some info about the project
 - Create normalize.css file (test on diff. browsers)?
