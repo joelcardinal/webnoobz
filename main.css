@@ -1,0 +1,122 @@
+body {
+	margin: 0;
+	padding: 0;
+	font-family: sans-serif;
+}
+header {
+    background-color: #6B6B6B;
+    margin: 0;
+    padding: 0;
+	height: 28px
+}
+header nav {
+	position: absolute;
+	left: 230px;
+}
+header nav ul {
+	list-style: none;
+    padding: 0;
+    margin: 0;
+}
+header nav ul li {
+	color: #C4C4C4;
+	cursor: pointer;
+	float: left;
+	padding: 6px 5px 0 5px;
+	font-size: 14px;
+	letter-spacing: 0.5px;
+}
+header nav ul li:hover {
+	color: #FFFFFF;
+}
+div.leftColumn {
+  background-color: #D5D5D5;
+  margin: 0;
+  padding: 0;
+  position: absolute;
+  top: 28px;
+  left: 0px;
+  right: 50.5%;
+  bottom: 0px;
+	border-right: 1px solid #000;
+}
+div.leftColumn textarea {
+  width: 100%;
+  height: 100%;
+  font-family: monospace;
+  overflow: scroll;
+  background-color: #D5D5D5;
+  resize: none;
+  border: none;
+  outline: #D5D5D5;
+}
+div.rightColumn {
+	background-color: #FFF;
+	  	margin: 0;
+	  	padding: 0;
+	  	position: absolute;
+	  	top: 28px;
+	  	left: 49.5%;
+	  	right: 0px;
+	  	bottom: 0px;
+}
+div.rightColumn iframe {
+	border: none;
+}
+.wholePage {
+    background-color: teal;
+    margin: 0;
+    padding: 0;
+    position: absolute;
+    top: 28px;
+    left: 10px;
+    right: 10px;
+    bottom: 10px;
+}
+.mode {
+	position: absolute;
+	right: 0.3em;
+	top: 0.2em;
+	color: #FFFFFF;
+	font-size: 5em;
+	font-weight: bold;
+	opacity: 0.1;
+	pointer-events: none;
+	z-index: 1;
+}
+.name {
+    background-color: #C5C5C5;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 200px;
+    color: #000;
+    padding: 4px 0 0 5px;
+    margin: 0;
+    font-size: 20px;
+    font-family: sans-serif;
+    /*height: 28px;*/
+    resize: none;
+    border: none;
+}
+.eye {
+	background-repeat: no-repeat;
+  width: 18px;
+  height: 12px;
+  margin: 7.5px 2px;
+  display: none;
+}
+.darkEye {
+	background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAAMCAYAAABvEu28AAAAQklEQVR42mNgwA/+o2GSwH8iMMmG4JMnyhCy1eFzCdEuI2QIIfH/pBr0n1oGEeWL/2QG9n9KEh/JSeA/NVI5yakaABYwYZ8Vu9AqAAAAAElFTkSuQmCC)
+}
+
+.lightEye {
+	background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAAMCAYAAABvEu28AAAARUlEQVR42mNgwAP+owEGUsB/IgDJhuCTJ8oQYi0jySVEu4yQIYTE4XLEGoQsR5FBRAUFKdFLUC2xhpGcBIj2DrmpG5ceAJhOhoj3a+FaAAAAAElFTkSuQmCC)
+}
+#editor {
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+}
