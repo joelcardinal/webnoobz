@@ -288,6 +288,10 @@ document.addEventListener('DOMContentLoaded', function(){
 /*
 
 TODO:
+- on click collaborate swith mode to HTML and don't allow switch/input until new connection
+	also doesn't have all data
+	I should consider going back to multiple inputs to avoid this issue
+- update gitignore
 - get domain .com .rocks .school .site .team .page .education .academy .exchange .website .link .band
 	htmlnoobs.com
 - Add name input for togetherjs
