@@ -3,6 +3,25 @@
   <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0,maximum-scale=1.0,initial-scale=1.0">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+	<meta name="revisit-after" content="7 days">
+	<meta name="robots" content="FOLLOW, INDEX">
+
+	<!--
+	<meta name="URL" content="http://www.x.com">
+	<meta name="google-site-verification" content="x">
+	-->
+	<meta name="rating" content="General">
+	<meta name="expires" content="never">
+	
+	<meta name="keywords" lang="en" content="Online code editor, real-time collaboration, IDE, javascript, html, css, collaborate, pair program">
+	<meta name="title" content="Online IDE with ">
+	<meta name="description" content="Online code editor with real-time collaboration.">
+	<meta name="distribution" content="Global">
+	<meta name="copyright" content="©2015 Joel Cardinal">
+	<title>WebPlayGround - Online code editor with real-time collaboration</title>
+	
+	
 	<link rel="stylesheet" href="main.css">
   </head>
   <body>
@@ -14,6 +33,8 @@
 					<li id="collaborateBtn">Collaborate</li>
 					<li class="eye"></li>
 					<li id="downloadBtn">Download</li>
+					<li id="helpBtn">Help</li>
+					<li id="aboutBtn">About</li>
 					<li id="updateBtn">Update</li>
 				</ul>
 			</nav>
@@ -27,6 +48,22 @@
 	  <div class="rightColumn">
 			<iframe height="100%" width="100%"></iframe>
 	  </div>
+		
+		<div id="helpMsg">
+			<div>
+				<div>Key Commands</div>
+<pre>
+Cycle Editors:    Ctrl+j
+Update Render:    Update button or Ctrl+k
+Resize Workspace: Ctrl+d
+Resize Render:    Ctrl+f
+</pre>
+			</div>
+		</div>
+		
+		<div id="aboutMsg">
+			Online code editor with real-time collaboration, suitable for experimenting and teaching client-side web development.
+		</div>
 		
 	  <script>
 	    // TogetherJS configuration

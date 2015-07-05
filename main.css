@@ -114,6 +114,35 @@ div.rightColumn iframe {
 .lightEye {
 	background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAAMCAYAAABvEu28AAAARUlEQVR42mNgwAP+owEGUsB/IgDJhuCTJ8oQYi0jySVEu4yQIYTE4XLEGoQsR5FBRAUFKdFLUC2xhpGcBIj2DrmpG5ceAJhOhoj3a+FaAAAAAElFTkSuQmCC)
 }
+#updateBtn {
+	padding-left: 20px;
+}
+#helpMsg {
+	display: none;
+	position: absolute;
+	top: 28px;
+	left: 398px;
+	text-align: center;
+	background-color: #6B6B6B;
+	padding: 10px;
+	z-index: 6;
+	color: #F2F2F2;
+	font-size: 12px;
+}
+#helpMsg pre {
+	text-align: left;
+}
+#aboutMsg {
+	display: none;
+	position: absolute;
+	top: 28px;
+	left: 438px;
+	padding: 30px;
+	color: #F2F2F2;
+	background-color: #6B6B6B;
+	z-index: 6;
+	width: 350px;
+}
 #editor {
 	position: absolute;
 	top: 0;

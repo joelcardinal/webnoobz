@@ -1,0 +1,34 @@
+https://togetherjs.com/
+https://github.com/mozilla/localForage
+
+http://pixlr.com/editor/
+http://duri.me/
+
+http://youmightnotneedjquery.com/
+
+http://www.joelcardinal.com/git/
+
+
+ACE
+- config
+https://github.com/ajaxorg/ace/wiki/Configuring-Ace
+- syntax
+https://github.com/ajaxorg/ace/wiki/Syntax-validation
+- key commands
+https://github.com/ajaxorg/ace/issues/91
+- autocompletion
+https://github.com/ajaxorg/ace/wiki/How-to-enable-Autocomplete-in-the-Ace-editor
+http://plnkr.co/edit/6MVntVmXYUbjR0DI82Cr?p=preview
+http://stackoverflow.com/questions/24795597/what-does-enablebasicautocompletion-for-ace-editor-do
+-src min no conflict
+https://github.com/ajaxorg/ace-builds/blob/master/src-min-noconflict
+https://github.com/ajaxorg/ace
+- embedding
+http://ace.c9.io/#nav=embedding
+- methods
+http://ace.c9.io/#nav=api&api=editor
+
+Prism
+http://prismjs.com/plugins/line-numbers/
+as IDE
+http://codepen.io/kazzkiq/pen/xGXaKR
