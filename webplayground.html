@@ -41,8 +41,10 @@
 	  </header>
 
 	  <div class="leftColumn">	
-			<div class="mode">HTML</div>
-			<div id="editor"></div>
+			<div id="mode">HTML</div>
+			<div id="html" class="editor"></div>
+			<div id="css" class="editor" style="display:none"></div>
+			<div id="javascript" class="editor" style="display:none"></div>
   	</div>
 	
 	  <div class="rightColumn">
@@ -70,7 +72,7 @@ Resize Render:    Ctrl+f
 	  	var TogetherJSConfig_cloneClicks = '#updateBtn',
 			TogetherJSConfig_dontShowClicks = true,
 	  	TogetherJSConfig_useMinimizedCode = true,
-	  	TogetherJSConfig_ignoreMessages = true,
+	  	//TogetherJSConfig_ignoreMessages = true,
 	  	TogetherJSConfig_suppressJoinConfirmation = true;
 	  </script>
 	  <script src="https://togetherjs.com/togetherjs-min.js"></script>

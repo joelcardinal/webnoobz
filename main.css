@@ -74,7 +74,7 @@ div.rightColumn iframe {
     right: 10px;
     bottom: 10px;
 }
-.mode {
+#mode {
 	position: absolute;
 	right: 0.3em;
 	top: 0.2em;
@@ -143,13 +143,16 @@ div.rightColumn iframe {
 	z-index: 6;
 	width: 350px;
 }
-#editor {
-	position: absolute;
-	top: 0;
-	left: 0;
-	right: 0;
-	bottom: 0;
+#html, #css, #javascript {
+  margin: 0;
+  padding: 0;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 50.5%;
+  bottom: 0px;
 }
+
 .togetherjs-cursor-container {
 	display: none;
 }

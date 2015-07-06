@@ -1,3 +1,11 @@
+// global vars
+var editors = [
+	['html',{}],
+	['css',{}],
+	['javascript',{}]
+];
+
+
 // TogetherJS events
 TogetherJS.hub.on("togetherjs.form-init", function (msg) {
 	updateIframe();
@@ -6,7 +14,7 @@ TogetherJS.hub.on("renderKeyPress", function (msg) {
   updateIframe();
 });
 TogetherJS.hub.on("switchEditor", function (msg) {
-  while(msg.currentMode != data[0][0]){switchEditor()};
+  while(msg.currentMode != editors[0][0]){switchEditor()};
 });
 TogetherJS.on("ready", function (msg) {
 	var eyeElm = document.querySelector('.eye');
@@ -25,17 +33,18 @@ TogetherJS.on("close", function (msg) {
 	eyeElm.classList.add('darkEye');
 	collabElm.setAttribute('style','');
 });
-
+TogetherJS.hub.on("togetherjs.hello", function (msg) {
+	TogetherJS.send({type: "modeUpdate",currentMode:editors[0][0]});
+});
+TogetherJS.hub.on("modeUpdate", function (msg) {
+	// TODO: this solution depends on dataUpdate being received before TJ form-init and client editor already being init - needs QA
+	if(TogetherJS.require("peers").Self.isCreator === false){
+		while(msg.currentMode != editors[0][0]){switchEditor(msg.currentMode)};
+	}
+});
 
 // Start main app functions
 
-var data = [
-	['html',''],
-	['javascript',''],
-	['css','']
-];
-
-var editor;
 
 // Download content as file hack, file name may work depending on browser
 // http://dtsn.me/2013/03/12/downloading-data-from-localstorage/	
@@ -65,18 +74,17 @@ function download() {
 // update render panel
 function updateIframe(){
 	var js,css,html;
-	data[0][1] = encodeURIComponent(editor.getSession().getValue());
 	
-	for (k in data){
-		switch( data[k][0] ){
+	for (var i = 0; editors.length > i; i++){
+		switch( editors[i][0] ){
 			case 'html':
-				html = data[k][1] ? data[k][1]: '<div style="font-family:monospace;color:#D1CACA;margin-top:31px;margin">Cycle Editors: Ctrl+j<br>Update Render: Update button or Ctrl+k<br>Resize Workspace: Ctrl+d<br>Resize Render: Ctrl+f</div>';
+				html = editors[i][1].getSession().getValue() ? editors[i][1].getSession().getValue(): '<div style="font-family:monospace;color:#D1CACA;margin-top:31px;margin">Cycle Editors: Ctrl+j<br>Update Render: Update button or Ctrl+k<br>Resize Workspace: Ctrl+d<br>Resize Render: Ctrl+f</div>';
 				break;
 			case 'css':
-				css = data[k][1].split('%C2%A0').join('');
+				css = editors[i][1].getSession().getValue() ? editors[i][1].getSession().getValue().split('%C2%A0').join('') : '';
 				break;
 			case 'javascript':
-				js = data[k][1];
+				js = editors[i][1].getSession().getValue() ? editors[i][1].getSession().getValue() : '';
 				break;
 		}
 	}
@@ -126,17 +134,32 @@ function resizePanel(panel){
 }
 
 // Ctrl+j
-function switchEditor(){
-	if( editor && editor.getSession() ){
-		data[0][1] = encodeURIComponent(editor.getSession().getValue());
-		data.push(data.shift());
-		document.querySelector('.mode').innerHTML = data[0][0].toUpperCase();
-		editor.getSession().setMode("ace/mode/" + data[0][0]);
-		editor.getSession().setValue(decodeURIComponent(data[0][1]));
-		if(TogetherJS && TogetherJS.running){
-				TogetherJS.send({type: "switchEditor",currentMode:data[0][0]});
+function switchEditor(mode){
+	if( editors && editors[0][1].getSession() ){
+		if(!mode){
+			editors.push(editors.shift());
+			cycleEditors();
+			document.getElementById('mode').innerHTML = editors[0][0].toUpperCase();
+			if(TogetherJS && TogetherJS.running){
+					TogetherJS.send({type: "switchEditor",currentMode:editors[0][0]});
+			}
+		}else{
+			editors.push(editors.shift());
+			cycleEditors();
+			document.getElementById('mode').innerHTML = editors[0][0].toUpperCase();
 		}
 	}
+}
+
+function cycleEditors(){
+	for (var i=0;editors.length > i; i++){
+		if(i === 0){
+			document.getElementById(editors[i][0]).style.display = 'block';
+		}else{
+			document.getElementById(editors[i][0]).style.display = 'none';
+		}
+	}
+	editors[0][1].focus();
 }
 
 // Ctrl+k
@@ -191,59 +214,63 @@ function toggleAbout(e){
 	}
 }
 
-// init Ace editor
+// init Ace editors
 function initAce(){
-  editor = ace.edit("editor");
-  editor.setTheme("ace/theme/monokai");
-  editor.getSession().setMode("ace/mode/html");
-	editor.setShowPrintMargin(false);
-	editor.$blockScrolling = Infinity; // prevents unnecessary messaging in console
-	editor.setOptions({highlightActiveLine:false});
+	
+	for(var i=0; editors.length > i; i++){		
+	  editors[i][1] = ace.edit(editors[i][0]);
+	  editors[i][1].setTheme("ace/theme/monokai");
+	  editors[i][1].getSession().setMode("ace/mode/"+editors[i][0]);
+		editors[i][1].setShowPrintMargin(false);
+		editors[i][1].$blockScrolling = Infinity; // prevents unnecessary messaging in console
+		editors[i][1].setOptions({highlightActiveLine:false});
 		
-	editor.commands.addCommand({
-		name: 'switchEditor',
-		bindKey: {
-			win: 'Ctrl-J',
-			mac: 'Ctrl-J',
-			sender: 'editor|cli'
-		},
-		exec: function(env, args, request) {
-				switchEditor();
+		editors[i][1].commands.addCommand({
+			name: 'switchEditor',
+			bindKey: {
+				win: 'Ctrl-J',
+				mac: 'Ctrl-J',
+				sender: 'editor|cli'
+			},
+			exec: function(env, args, request) {
+					switchEditor();
+				}
+		});
+		editors[i][1].commands.addCommand({
+			name: 'updateEditor',
+			bindKey: {
+				win: 'Ctrl-K',
+				mac: 'Ctrl-K',
+				sender: 'editor|cli'
+			},
+			exec: function(env, args, request) {
+				updateEditor();
 			}
-	});
-	editor.commands.addCommand({
-		name: 'updateEditor',
-		bindKey: {
-			win: 'Ctrl-K',
-			mac: 'Ctrl-K',
-			sender: 'editor|cli'
-		},
-		exec: function(env, args, request) {
-			updateEditor();
-		}
-	});
-	editor.commands.addCommand({
-		name: 'resizeLeftPanel',
-		bindKey: {
-			win: 'Ctrl-D',
-			mac: 'Ctrl-D',
-			sender: 'editor|cli'
-		},
-		exec: function(env, args, request) {
-			resizePanel('leftColumn');
-		}
-	});
-	editor.commands.addCommand({
-		name: 'resizeRightPanel',
-		bindKey: {
-			win: 'Ctrl-F',
-			mac: 'Ctrl-F',
-			sender: 'editor|cli'
-		},
-		exec: function(env, args, request) {
-			resizePanel('rightColumn');
-		}
-	});
+		});
+		editors[i][1].commands.addCommand({
+			name: 'resizeLeftPanel',
+			bindKey: {
+				win: 'Ctrl-D',
+				mac: 'Ctrl-D',
+				sender: 'editor|cli'
+			},
+			exec: function(env, args, request) {
+				resizePanel('leftColumn');
+			}
+		});
+		editors[i][1].commands.addCommand({
+			name: 'resizeRightPanel',
+			bindKey: {
+				win: 'Ctrl-F',
+				mac: 'Ctrl-F',
+				sender: 'editor|cli'
+			},
+			exec: function(env, args, request) {
+				resizePanel('rightColumn');
+			}
+		});
+		
+	}
 	
 	/*
 	
@@ -288,9 +315,8 @@ document.addEventListener('DOMContentLoaded', function(){
 /*
 
 TODO:
-- on click collaborate swith mode to HTML and don't allow switch/input until new connection
-	also doesn't have all data
-	I should consider going back to multiple inputs to avoid this issue
+- add toggle for read only
+- add toggle for switch sync
 - update gitignore
 - get domain .com .rocks .school .site .team .page .education .academy .exchange .website .link .band
 	htmlnoobs.com
