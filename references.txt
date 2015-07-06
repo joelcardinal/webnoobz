@@ -25,6 +25,7 @@ https://github.com/ajaxorg/ace-builds/blob/master/src-min-noconflict
 https://github.com/ajaxorg/ace
 - embedding
 http://ace.c9.io/#nav=embedding
+https://gist.github.com/duncansmart/5267653
 - methods
 http://ace.c9.io/#nav=api&api=editor
 
