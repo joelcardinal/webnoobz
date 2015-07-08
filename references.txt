@@ -29,6 +29,18 @@ https://gist.github.com/duncansmart/5267653
 - methods
 http://ace.c9.io/#nav=api&api=editor
 
+	/*
+	
+	editor.getSession().setTabSize(2);
+	
+	setOptions({enableBasicAutocompletion: true});
+
+	editor.getSession().on('change', function(){
+	  console.log(editor.getSession().getValue());
+	});
+	
+	*/
+
 Prism
 http://prismjs.com/plugins/line-numbers/
 as IDE

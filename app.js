@@ -269,20 +269,10 @@ function initAce(){
 				resizePanel('rightColumn');
 			}
 		});
-		
-	}
+	} // end for
 	
-	/*
-	
-	editor.getSession().setTabSize(2);
-	
-	setOptions({enableBasicAutocompletion: true});
+	editors[0][1].focus();
 
-	editor.getSession().on('change', function(){
-	  console.log(editor.getSession().getValue());
-	});
-	
-	*/
 }
 
 // utils
@@ -314,30 +304,51 @@ document.addEventListener('DOMContentLoaded', function(){
 
 /*
 
+Use your own product, be your most active customer!
+
 TODO:
+- Abilty to edit html/head/body tags
 - add toggle for read only
 - add toggle for switch sync
-- update gitignore
-- get domain .com .rocks .school .site .team .page .education .academy .exchange .website .link .band
-	htmlnoobs.com
+- tidyup
+- lint
 - Add name input for togetherjs
 		var userName = window.prompt('Please enter your name:');
 		TogetherJS.require("peers").Self.name = userName;
 		TogetherJS.require("peers").Self.update(TogetherJS.require("peers").Self);
-- Create normalize.css file (test on diff. browsers)?
+
 - Save content
 	https://github.com/mozilla/localForage
+
+- Create normalize.css file (test on diff. browsers)?
+
+- include one app in another
+
 - Refactor
-- Mobile UX
-- Add quick load of library examples (jQuery,D3,ThreeJS...etc.)
-- Abilty to edit html/head/body tags
+
+- Add quick load of library/examples (jQuery,D3,ThreeJS...etc.), UX (text search?)
+	- Babel Support
+
 - Add learning panel
 	- Voice and keyboard recording?
 	- Youtube?
 	- Web hub for sharing
 	- sync learning panel with Collaborate?
+
+- Mobile UX
+	- add icon controls for tablet users
+
 - Multi-language support
 	https://hacks.mozilla.org/2014/12/introducing-the-javascript-internationalization-api/
+
 - Login? Need to think about how this will affect user if added later (lose all local data)
+	- login cookies can get stolen
+
+- Add beta flag / name 
+- get domain .com .rocks .school .site .team .page .education .academy .exchange .website .link .band
+	htmlnoobs.com pairide.com pearide.com paireditor.com peareditor.com oiceditor.com oicedit.com
+	peepseditor.com htmltogether.com htmlpartner.com synceditor.com sinkeditor.com webbudz.com webudz.com
+	online real time editor partner pair program web page tutor teach learn together connect collaborate html css js render
+	buddy cohort comrade pal helper sidekick playmate sync 
 
 */
