@@ -1,41 +1,72 @@
 // global vars
-var editors = [
-	['html',{}],
-	['css',{}],
-	['javascript',{}]
-];
-
+var syncSwitch = true,
+	editors = [
+		['html',{}],
+		['css',{}],
+		['javascript',{}]
+	];
 
 // TogetherJS events
 TogetherJS.hub.on("togetherjs.form-init", function (msg) {
 	updateIframe();
 });
+
 TogetherJS.hub.on("renderKeyPress", function (msg) {
   updateIframe();
 });
+
 TogetherJS.hub.on("switchEditor", function (msg) {
   while(msg.currentMode != editors[0][0]){switchEditor()};
 });
+
 TogetherJS.on("ready", function (msg) {
 	var eyeElm = document.querySelector('.eye');
-	var collabElm = document.getElementById('collaborateBtn');
+	var collabBtnElm = document.getElementById('collaborateBtn');
+	
 	eyeElm.style.display = 'block';
 	eyeElm.classList.remove('darkEye');
 	eyeElm.classList.add('lightEye');
-	collabElm.style.color = '#FFF';
+	
+	collabBtnElm.style.color = '#FFFFFF';
+	
+	if( TogetherJS.require("peers").Self.isCreator ){
+		var lockBtnElm = document.getElementById('lockBtn');
+		var switchBtnElm = document.getElementById('switchBtn');
+		
+		lockBtnElm.style.display = 'block';
+		lockBtnElm.setAttribute('class', '');
+		lockBtnElm.classList.add('lightLock');
+	
+		switchBtnElm.style.display = 'block';
+		switchBtnElm.setAttribute('class', '');
+		switchBtnElm.classList.add('lightSwitch');
+	}
 });
 
 TogetherJS.on("close", function (msg) {
 	var eyeElm = document.querySelector('.eye');
-	var collabElm = document.getElementById('collaborateBtn');
+	var collabBtnElm = document.getElementById('collaborateBtn');
+	
 	eyeElm.style.display = 'none';
 	eyeElm.classList.remove('lightEye');
 	eyeElm.classList.add('darkEye');
-	collabElm.setAttribute('style','');
+	
+	collabBtnElm.setAttribute('style','');
+	
+	if( TogetherJS.require("peers").Self.isCreator ){
+		var lockBtnElm = document.getElementById('lockBtn');
+		var switchBtnElm = document.getElementById('switchBtn');
+	
+		lockBtnElm.style.display = 'none';
+	
+		switchBtnElm.style.display = 'none';
+	}
 });
-TogetherJS.hub.on("togetherjs.hello", function (msg) {
+
+TogetherJS.hub.on("togetherjs.hello", function (msg) {	
 	TogetherJS.send({type: "modeUpdate",currentMode:editors[0][0]});
 });
+
 TogetherJS.hub.on("modeUpdate", function (msg) {
 	// TODO: this solution depends on dataUpdate being received before TJ form-init and client editor already being init - needs QA
 	if(TogetherJS.require("peers").Self.isCreator === false){
@@ -43,8 +74,19 @@ TogetherJS.hub.on("modeUpdate", function (msg) {
 	}
 });
 
-// Start main app functions
+TogetherJS.hub.on("toggleLock", function (msg) {
+		if(TogetherJS.require("peers").Self.isCreator === false){
+			toggleLock();
+		}
+});
 
+TogetherJS.hub.on("toggleSwitch", function (msg) {
+		if(TogetherJS.require("peers").Self.isCreator === false){
+			toggleSwitch();
+		}
+});
+
+// Start main app functions
 
 // Download content as file hack, file name may work depending on browser
 // http://dtsn.me/2013/03/12/downloading-data-from-localstorage/	
@@ -140,7 +182,7 @@ function switchEditor(mode){
 			editors.push(editors.shift());
 			cycleEditors();
 			document.getElementById('mode').innerHTML = editors[0][0].toUpperCase();
-			if(TogetherJS && TogetherJS.running){
+			if(TogetherJS && TogetherJS.running && syncSwitch){
 					TogetherJS.send({type: "switchEditor",currentMode:editors[0][0]});
 			}
 		}else{
@@ -159,7 +201,10 @@ function cycleEditors(){
 			document.getElementById(editors[i][0]).style.display = 'none';
 		}
 	}
-	editors[0][1].focus();
+	// don't put focus on panel if lock is on
+	if( getComputedStyle( document.getElementById('lock') ,null).getPropertyValue('display') === 'none' ){
+		editors[0][1].focus();
+	}
 }
 
 // Ctrl+k
@@ -203,7 +248,8 @@ function toggleAbout(e){
 	var elem = document.getElementById('aboutMsg');
 	var elemToClose = document.getElementById('helpMsg');
 	var elemToRemoveStyle = document.getElementById('helpBtn');
-	if(	getComputedStyle(elem,null).getPropertyValue('display') === 'none'  ){
+	
+	if(	getComputedStyle(elem,null).getPropertyValue('display') === 'none' ){
 		elemToClose.style.display = 'none';
 		elemToRemoveStyle.removeAttribute("style");
 		elem.style.display = 'block';
@@ -212,6 +258,65 @@ function toggleAbout(e){
 		elem.style.display = 'none';
 		e.target.removeAttribute("style");
 	}
+}
+
+// toggles ability of TogetherJS followers to manipulate panels
+function toggleLock(){
+		var lockElm = document.getElementById('lock');
+		var lockElmBtn = document.getElementById('lockBtn');
+		var isCreator = TogetherJS.require("peers").Self.isCreator;
+		
+		if(	lockElmBtn.classList.contains('darkLock') ){
+			lockElmBtn.setAttribute('class','');
+			lockElmBtn.classList.add('lightLock');
+			if(isCreator){
+				TogetherJS.send({type: "toggleLock"});
+			}else{
+				lockElm.style.display = 'none';
+				editors[0][1].focus();
+			}
+		}else{
+			lockElmBtn.setAttribute('class','');
+			lockElmBtn.classList.add('darkLock');
+			if(isCreator){
+				TogetherJS.send({type: "toggleLock"});
+			}else{
+				lockElm.style.display = 'block';
+				document.activeElement.blur(); // removes focus from panel
+			}
+		}
+}
+
+// toggles ability of TogetherJS collaborators syncing panel view
+function toggleSwitch(){
+	var switchElmBtn = document.getElementById('switchBtn');
+	var isCreator = TogetherJS.require("peers").Self.isCreator;
+	
+	if(syncSwitch){
+		syncSwitch = false;
+		switchElmBtn.setAttribute('class','');
+		switchElmBtn.classList.add('darkSwitch');
+	}else{
+		syncSwitch = true;
+		switchElmBtn.setAttribute('class','');
+		switchElmBtn.classList.add('lightSwitch');
+		// get non-creators back in sync before anyone switches
+		if(isCreator){
+			TogetherJS.send({type: "modeUpdate",currentMode:editors[0][0]});
+		}
+	}
+	
+	if(isCreator){
+		TogetherJS.send({type: "toggleSwitch"});
+	}
+}
+
+// pretty print code in panels
+function formatPanels(){
+	for (var i = 0; editors.length > i; i++){
+		editors[i][1].getSession().setValue( Beautifier[ editors[i][0] ]( editors[i][1].getSession().getValue() ) );
+	}
+	editors[0][1].focus();
 }
 
 // init Ace editors
@@ -276,13 +381,6 @@ function initAce(){
 }
 
 // utils
-function forEachElement(selector, fn){
-  var elements = document.querySelectorAll(selector);
-  for (var i = 0; i < elements.length; i++){
-    fn(elements[i], i);
-	}
-}
-
 function renderKeyPressMsg() {
   if(TogetherJS.running){
   	TogetherJS.send({type: "renderKeyPress"});
@@ -298,6 +396,9 @@ document.addEventListener('DOMContentLoaded', function(){
 	document.querySelector('#downloadBtn').addEventListener('click', download, false );
 	document.querySelector('#helpBtn').addEventListener('click', toggleHelp, false );
 	document.querySelector('#aboutBtn').addEventListener('click', toggleAbout, false );
+	document.querySelector('#lockBtn').addEventListener('click', toggleLock, false );
+	document.querySelector('#switchBtn').addEventListener('click', toggleSwitch, false );
+	document.querySelector('#formatBtn').addEventListener('click', formatPanels, false );
 	document.querySelector('#collaborateBtn').addEventListener('click', TogetherJS, false );
 	document.querySelector('.eye').addEventListener('click', toggleEye, false );
 });
@@ -307,24 +408,17 @@ document.addEventListener('DOMContentLoaded', function(){
 Use your own product, be your most active customer!
 
 TODO:
-- Abilty to edit html/head/body tags
-- add toggle for read only
-- add toggle for switch sync
-- tidyup
-- lint
-- Add name input for togetherjs
-		var userName = window.prompt('Please enter your name:');
-		TogetherJS.require("peers").Self.name = userName;
-		TogetherJS.require("peers").Self.update(TogetherJS.require("peers").Self);
+- Add Edit nav
+	- add Head (html/head/body)
+	- move Format under Edit
 
 - Save content
 	https://github.com/mozilla/localForage
 
 - Create normalize.css file (test on diff. browsers)?
 
-- include one app in another
-
 - Refactor
+		- switchToggle uses var to define state, lockToggle uses class
 
 - Add quick load of library/examples (jQuery,D3,ThreeJS...etc.), UX (text search?)
 	- Babel Support
@@ -341,6 +435,9 @@ TODO:
 - Multi-language support
 	https://hacks.mozilla.org/2014/12/introducing-the-javascript-internationalization-api/
 
+- include one app in another
+	- prevent recursion
+- link to different files
 - Login? Need to think about how this will affect user if added later (lose all local data)
 	- login cookies can get stolen
 

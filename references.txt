@@ -1,4 +1,45 @@
 https://togetherjs.com/
+
+
+		<!--
+		<div id="namePromptContainer">
+			<div class="namePrompt">
+				Please Enter Name:
+				<input id="userName" type="text" placeholder="name"><span>submit</span>
+			</div>
+		</div>
+		-->
+/*
+#namePromptContainer {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  left: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+#namePromptContainer .namePrompt{
+	width: 200px;
+	  color: #FFF;
+	  font-size: 14px;
+	  margin: auto;
+	  padding-top: 5%;
+	  text-align: center;
+	  line-height: 30px;
+}
+#namePromptContainer input{
+  margin: 0;
+  border: none;
+  padding: 4px;
+}
+#namePromptContainer span{
+	border: 1px solid #FFF;
+  margin: 0;
+  padding: 2px 4px;
+}
+*/
+
+
 https://github.com/mozilla/localForage
 
 http://pixlr.com/editor/
