@@ -138,3 +138,15 @@ Should it be a multi-use tool?
      writing / notes
      editor
      ...some other tools...? (e.g. quiz creation)
+		 
+------------------
+
+Progressive web app?
+
+https://developers.google.com/web/progressive-web-apps?hl=en
+https://addyosmani.com/blog/getting-started-with-progressive-web-apps/
+https://www.google.com/webhp?sourceid=chrome-instant&ion=1&espv=2&ie=UTF-8#q=progressive%20web%20apps
+http://www.infoworld.com/article/3017994/application-development/google-progressive-web-apps-new-scheme-for-native-like-web-apps.html
+http://www.infoworld.com/article/3042705/web-development/javascript-founder-brendan-eich-webassembly-is-a-game-changer.html
+
+https://www.smashingmagazine.com/2014/10/providing-a-native-experience-with-web-technologies/

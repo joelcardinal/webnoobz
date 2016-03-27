@@ -424,6 +424,9 @@ TODO:
 	- fix switch/cycle bugs ***PRIORITY***
 		- switchToggle uses var to define state, lockToggle uses class
 	- currently js is a mess
+	- follow Google AMP methodology to improve speed
+		- https://www.ampproject.org/docs/get_started/about-amp.html
+
 
 - UX
 	- Accessibility
@@ -447,7 +450,8 @@ TODO:
 - Platform
 	- should use own TogetherJS client/server
 		- include TogetherJS pull requests that fix Ace/other issues
-
+	- Progressive Web App?
+	- Offline cacheing
 
 NEW FEATURE IDEAS
 
@@ -456,7 +460,7 @@ NEW FEATURE IDEAS
 
 - Add learning panel
 	- code comments become presentation?
-	- Voice and keyboard recording?
+	- Voice and keyboard recording to create educational material?
 	- Youtube?
 	- Web hub for sharing
 	- sync learning panel with Collaborate?
