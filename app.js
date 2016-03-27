@@ -20,7 +20,7 @@ TogetherJS.hub.on("switchEditor", function (msg) {
 });
 
 TogetherJS.on("ready", function (msg) {
-	var eyeElm = document.querySelector('.eye');
+	var eyeElm = document.querySelector('#eyeBtn');
 	var collabBtnElm = document.getElementById('collaborateBtn');
 	
 	eyeElm.style.display = 'block';
@@ -44,7 +44,7 @@ TogetherJS.on("ready", function (msg) {
 });
 
 TogetherJS.on("close", function (msg) {
-	var eyeElm = document.querySelector('.eye');
+	var eyeElm = document.querySelector('#eyeBtn');
 	var collabBtnElm = document.getElementById('collaborateBtn');
 	
 	eyeElm.style.display = 'none';
@@ -177,20 +177,29 @@ function resizePanel(panel){
 
 // Ctrl+j
 function switchEditor(mode){
-	if( editors && editors[0][1].getSession() ){
-		if(!mode){
-			editors.push(editors.shift());
-			cycleEditors();
-			document.getElementById('mode').innerHTML = editors[0][0].toUpperCase();
-			if(TogetherJS && TogetherJS.running && syncSwitch){
-					TogetherJS.send({type: "switchEditor",currentMode:editors[0][0]});
+	console.log(syncSwitch); // true when highlight, on by default
+	// if not creator && syncSwitch is true && mode = current, then don't switch
+	
+	var isCreator = TogetherJS && TogetherJS.running && TogetherJS.require("peers").Self.isCreator;
+	
+	//if(!isCreator && syncSwitch && mode){
+		if( editors && editors[0][1].getSession() ){
+
+			if(!mode){
+				editors.push(editors.shift());
+				cycleEditors();
+				document.getElementById('mode').innerHTML = editors[0][0].toUpperCase();
+				if(isCreator  && syncSwitch){
+						TogetherJS.send({type: "switchEditor",currentMode:editors[0][0]});
+				}
+			}else if(isCreator === false && syncSwitch && currentMode:editors[0][0] ){
+				editors.push(editors.shift());
+				cycleEditors();
+				document.getElementById('mode').innerHTML = editors[0][0].toUpperCase();
 			}
-		}else{
-			editors.push(editors.shift());
-			cycleEditors();
-			document.getElementById('mode').innerHTML = editors[0][0].toUpperCase();
+		
 		}
-	}
+
 }
 
 function cycleEditors(){
@@ -215,7 +224,7 @@ function updateEditor(){
 
 // show/hide TogetherJS UI
 function toggleEye(){
-	var elm = document.querySelector('.eye');
+	var elm = document.querySelector('#eyeBtn');
 	if(elm.classList.contains('lightEye')){
 		elm.classList.remove('lightEye');
 		elm.classList.add('darkEye');
@@ -400,28 +409,47 @@ document.addEventListener('DOMContentLoaded', function(){
 	document.querySelector('#switchBtn').addEventListener('click', toggleSwitch, false );
 	document.querySelector('#formatBtn').addEventListener('click', formatPanels, false );
 	document.querySelector('#collaborateBtn').addEventListener('click', TogetherJS, false );
-	document.querySelector('.eye').addEventListener('click', toggleEye, false );
+	document.querySelector('#eyeBtn').addEventListener('click', toggleEye, false );
 });
 
 /*
 
-Use your own product, be your most active customer!
+Use your own product, be your most active user!
 
 TODO:
-- Add Edit nav
-	- add Head (html/head/body)
-	- move Format under Edit
-
-- Save content
-	https://github.com/mozilla/localForage
-
-- Create normalize.css file (test on diff. browsers)?
 
 - Refactor
+	- fix switch/cycle bugs ***PRIORITY***
 		- switchToggle uses var to define state, lockToggle uses class
+	- currently js is a mess
 
-- Add quick load of library/examples (jQuery,D3,ThreeJS...etc.), UX (text search?)
-	- Babel Support
+- UX
+	- Accessibility
+	- responsive for mobile (flexbox?)
+		- add nav text and icons for all keyboard commands (expand...etc.)
+		- create normalize.css file (test on diff. browsers)?
+	- Multi-language support
+		https://hacks.mozilla.org/2014/12/introducing-the-javascript-internationalization-api/
+	- Add Edit nav
+		- add Head (and html, body elements?)
+		- move Format under Edit?
+	- improve TogetherJS provide name alert
+	- style TogetherJS collaborate panel?
+
+- Branding
+	- improve git README
+	- improve about/help (411 & CSS -- should be responsive overlay with scroll?)
+	- add icon to nav bar
+	- Add beta flag / name
+
+- Platform
+	- should use own TogetherJS client/server
+
+
+NEW FEATURE IDEAS
+
+- Add quick load of library/frameworks?
+	- ES6 (Babel Support)
 
 - Add learning panel
 	- Voice and keyboard recording?
@@ -429,23 +457,15 @@ TODO:
 	- Web hub for sharing
 	- sync learning panel with Collaborate?
 
-- Mobile UX
-	- add icon controls for tablet users
+- Save content (locally/server)?
+	- https://github.com/mozilla/localForage
 
-- Multi-language support
-	https://hacks.mozilla.org/2014/12/introducing-the-javascript-internationalization-api/
-
-- include one app in another
-	- prevent recursion
-- link to different files
 - Login? Need to think about how this will affect user if added later (lose all local data)
-	- login cookies can get stolen
+	- security
 
-- Add beta flag / name 
-- get domain .com .rocks .school .site .team .page .education .academy .exchange .website .link .band
-	htmlnoobs.com pairide.com pearide.com paireditor.com peareditor.com oiceditor.com oicedit.com
-	peepseditor.com htmltogether.com htmlpartner.com synceditor.com sinkeditor.com webbudz.com webudz.com
-	online real time editor partner pair program web page tutor teach learn together connect collaborate html css js render
-	buddy cohort comrade pal helper sidekick playmate sync 
+- Include one Webnoobz app in another?
+	- prevent recursion
+
+- Link to different files?
 
 */

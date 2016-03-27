@@ -9,12 +9,12 @@
 	<!--
 	<meta name="google-site-verification" content="x">
 	-->
-	<meta name="keywords" lang="en" content="Online code editor, real-time collaboration, IDE, javascript, html, css, collaborate, pair program">
-	<meta name="title" content="Online IDE with ">
+	<meta name="keywords" lang="en" content="webnoobz, Online code editor, real-time collaboration, IDE, javascript, html, css, collaborate, pair program">
+	<meta name="title" content="Webnoobz - Online Collaborative Editor">
 	<meta name="description" content="Online code editor with real-time collaboration.">
 	<meta name="copyright" content="©2015 Joel Cardinal">
-	<title>WebPlayGround - Online code editor with real-time collaboration</title>
-	
+	<title>Webnoobz - Online Collaborative Editor</title>
+	<link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
 	<link rel="stylesheet" href="main.css">
   </head>
   <body>
@@ -24,9 +24,9 @@
 	  	<nav>
 				<ul>
 					<li id="collaborateBtn">Collaborate</li>
-					<li class="eye"></li>
-					<li id="lockBtn"></li>
-					<li id="switchBtn"></li>				
+					<li title="View Collaborate Dock" class="eyeIcon" id="eyeBtn"></li>
+					<li title="Lock Editors" class="lockIcon" id="lockBtn"></li>
+					<li title="Sync Editors" class="syncIcon" id="switchBtn"></li>				
 					<li id="downloadBtn">Download</li>
 					<li id="formatBtn">Format</li>
 					<li id="helpBtn">Help</li>
@@ -56,11 +56,16 @@ Update Render:    Update button or Ctrl+k
 Resize Workspace: Ctrl+d
 Resize Render:    Ctrl+f
 </pre>
+				<div>Features</div>
+				<div><div class="eyeIcon"></div> Toggles viewing of collaborate dock. On by default.</div>
+				<div><div class="lockIcon"></div> Toggles locking pupils' editors, so they can not edit. Off by default.</div>
+				<div><div class="syncIcon"></div> Toggles sync of editors, when you switch they all switch. On by default.</div>		
 			</div>
 		</div>
 		
 		<div id="aboutMsg">
-			Online code editor with real-time collaboration, suitable for experimenting and teaching client-side web development.
+			<p>Webnoobz is an online code editor with real-time collaboration, suitable for teaching client-side web development.</p>
+			<p>For more information visit <a href="https://github.com/joelcardinal/webnoobz">Webnoobz on GitHub</a>.</p>
 		</div>
 		
 		<div id="lock"></div>
@@ -74,7 +79,7 @@ Resize Render:    Ctrl+f
 	  	TogetherJSConfig_useMinimizedCode = true,
 			TogetherJSConfig_siteName = 'WebPlayground',
 			TogetherJSConfig_toolName = 'Collaborate',
-	  	//TogetherJSConfig_ignoreMessages = true,
+	  	TogetherJSConfig_ignoreMessages = true,
 			TogetherJSConfig_suppressJoinConfirmation = true,
 			TogetherJSConfig_getUserName = function(){
 				userName = userName || window.prompt('Please Enter Name') || (TogetherJS.require("peers").Self.isCreator ? 'Leader' : 'User');
