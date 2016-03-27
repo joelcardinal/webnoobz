@@ -41,6 +41,14 @@ https://togetherjs.com/
 
 
 https://github.com/mozilla/localForage
+http://www.html5rocks.com/en/tutorials/offline/quota-research/#disqus_thread
+
+https://togetherjs.com/docs/
+https://togetherjs.com/docs/#extending-togetherjs
+
+http://www.html5rocks.com/en/features/offline
+
+http://www.html5rocks.com/en/features/performance
 
 http://pixlr.com/editor/
 http://duri.me/
@@ -49,6 +57,10 @@ http://youmightnotneedjquery.com/
 
 http://www.joelcardinal.com/git/
 
+http://jaydenseric.com/blog/forget-normalize-or-resets-lay-your-own-css-foundation
+
+Caja Code Sandboxing
+https://developers.google.com/caja/
 
 ACE
 - config
@@ -86,3 +98,43 @@ Prism
 http://prismjs.com/plugins/line-numbers/
 as IDE
 http://codepen.io/kazzkiq/pen/xGXaKR
+
+------------------
+
+QA/ Feedback Tool
+
+------------------
+
+Use console messaging?:
+
+console.info('%c Hello Welcome to programming JS 101, type the following to begin: learn.start ','color:#000;background:yellow;font-size:14px');
+
+Use js/HTML comments to create code presentation:
+http://stackoverflow.com/questions/13363946/how-do-i-get-an-html-comment-with-javascript
+http://stackoverflow.com/questions/4227802/retrieve-javascript-comments-in-javascript-or-how-do-i-parse-js-in-js
+
+http://www.thecssninja.com/javascript/console
+
+------------------
+
+i18n
+
+http://i18next.com/
+http://stackoverflow.com/questions/673905/best-way-to-determine-users-locale-within-browser
+
+------------------
+
+package for offline use
+optional panel for learning (*requires online, if user offline show message -- unless imported page cached?)
+     iframe you can bring in content from:
+         youtube**
+         URL**
+         community
+         (**need warning message about bringing in unknown content)
+
+If learning panel useful, might receive requests to customize the app for personalized class teaching
+
+Should it be a multi-use tool?
+     writing / notes
+     editor
+     ...some other tools...? (e.g. quiz creation)

@@ -414,6 +414,8 @@ document.addEventListener('DOMContentLoaded', function(){
 
 /*
 
+webnoobz.com
+
 Use your own product, be your most active user!
 
 TODO:
@@ -444,6 +446,7 @@ TODO:
 
 - Platform
 	- should use own TogetherJS client/server
+		- include TogetherJS pull requests that fix Ace/other issues
 
 
 NEW FEATURE IDEAS
@@ -452,6 +455,7 @@ NEW FEATURE IDEAS
 	- ES6 (Babel Support)
 
 - Add learning panel
+	- code comments become presentation?
 	- Voice and keyboard recording?
 	- Youtube?
 	- Web hub for sharing
@@ -467,5 +471,9 @@ NEW FEATURE IDEAS
 	- prevent recursion
 
 - Link to different files?
+
+- Versioning? Each "update" actually git commit?
+
+- Additional code language support
 
 */
